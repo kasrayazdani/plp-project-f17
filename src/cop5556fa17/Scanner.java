@@ -51,7 +51,8 @@ public class Scanner {
 	}
 	
 	public static enum State {
-		START;
+		START,
+		END;
 	}
 	
 	/*
@@ -91,6 +92,11 @@ public class Scanner {
 		reservedWords.put("file", Kind.KW_file);
 	}
 
+	public int skipWhiteSpaces(int pos) {
+		
+		return pos;
+	}
+	
 	/** Class to represent Tokens. 
 	 * 
 	 * This is defined as a (non-static) inner class
@@ -307,10 +313,35 @@ public class Scanner {
 		int line = 1;
 		int posInLine = 1;
 		State state = State.START;
-		//while (pos < chars.length) {
+		char ch;
+		System.out.println("chars.length = "+chars.length);
+		while (pos < chars.length) {
+			System.out.println(pos);
+			switch(state) {
+			case START:
+				pos = skipWhiteSpaces(pos);
+				if (pos < chars.length) {
+					ch = chars[pos];
+					switch(ch) {
+					case EOFchar:
+						tokens.add(new Token(Kind.EOF, pos, 0, line, posInLine));
+						pos++;
+						break;
+					
+					case ';':
+						tokens.add(new Token(Kind.SEMI, pos, 1, line, posInLine));
+						pos++;
+						posInLine++;
+						break;
+					}
+				}
+				break;
 			
-		//}
-		tokens.add(new Token(Kind.EOF, pos, 0, line, posInLine));
+			default:
+				break;
+			}
+		}
+		//tokens.add(new Token(Kind.EOF, pos, 0, line, posInLine));
 		return this;
 
 	}
