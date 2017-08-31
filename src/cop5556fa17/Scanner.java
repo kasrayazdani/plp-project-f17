@@ -16,6 +16,9 @@ package cop5556fa17;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+
+import com.sun.xml.internal.ws.util.xml.XMLReaderComposite.State;
 
 public class Scanner {
 	
@@ -45,6 +48,47 @@ public class Scanner {
 		OP_AND/* & */, OP_OR/* | */, OP_PLUS/* + */, OP_MINUS/* - */, OP_TIMES/* * */, OP_DIV/* / */, OP_MOD/* % */, 
 		OP_POWER/* ** */, OP_AT/* @ */, OP_RARROW/* -> */, OP_LARROW/* <- */, LPAREN/* ( */, RPAREN/* ) */, 
 		LSQUARE/* [ */, RSQUARE/* ] */, SEMI/* ; */, COMMA/* , */, EOF;
+	}
+	
+	public static enum State {
+		START;
+	}
+	
+	/*
+	 * This part of code is generated in python!
+	 * keywords = "x | X | y | Y | r | R | a | A | Z | DEF_X | DEF_Y | SCREEN | cart_x | cart_y
+	 *  | polar_a | polar_r | abs | sin | cos | atan | log | image | int | boolean | url | file"
+	 *  for i in keywords.split(' | '):
+	 *  	print("reservedWords.put(\"{}\", Kind.KW_{});".format(i,i))
+	 * */
+	public static HashMap<String, Kind> reservedWords = new HashMap<>();
+	public void populate_reservedWords() {
+		reservedWords.put("x", Kind.KW_x);
+		reservedWords.put("X", Kind.KW_X);
+		reservedWords.put("y", Kind.KW_y);
+		reservedWords.put("Y", Kind.KW_Y);
+		reservedWords.put("r", Kind.KW_r);
+		reservedWords.put("R", Kind.KW_R);
+		reservedWords.put("a", Kind.KW_a);
+		reservedWords.put("A", Kind.KW_A);
+		reservedWords.put("Z", Kind.KW_Z);
+		reservedWords.put("DEF_X", Kind.KW_DEF_X);
+		reservedWords.put("DEF_Y", Kind.KW_DEF_Y);
+		reservedWords.put("SCREEN", Kind.KW_SCREEN);
+		reservedWords.put("cart_x", Kind.KW_cart_x);
+		reservedWords.put("cart_y", Kind.KW_cart_y);
+		reservedWords.put("polar_a", Kind.KW_polar_a);
+		reservedWords.put("polar_r", Kind.KW_polar_r);
+		reservedWords.put("abs", Kind.KW_abs);
+		reservedWords.put("sin", Kind.KW_sin);
+		reservedWords.put("cos", Kind.KW_cos);
+		reservedWords.put("atan", Kind.KW_atan);
+		reservedWords.put("log", Kind.KW_log);
+		reservedWords.put("image", Kind.KW_image);
+		reservedWords.put("int", Kind.KW_int);
+		reservedWords.put("boolean", Kind.KW_boolean);
+		reservedWords.put("url", Kind.KW_url);
+		reservedWords.put("file", Kind.KW_file);
 	}
 
 	/** Class to represent Tokens. 
@@ -245,6 +289,7 @@ public class Scanner {
 		this.chars = Arrays.copyOf(inputString.toCharArray(), numChars + 1); // input string terminated with null char
 		chars[numChars] = EOFchar;
 		tokens = new ArrayList<Token>();
+		populate_reservedWords();
 	}
 
 
@@ -261,6 +306,10 @@ public class Scanner {
 		int pos = 0;
 		int line = 1;
 		int posInLine = 1;
+		State state = State.START;
+		//while (pos < chars.length) {
+			
+		//}
 		tokens.add(new Token(Kind.EOF, pos, 0, line, posInLine));
 		return this;
 
