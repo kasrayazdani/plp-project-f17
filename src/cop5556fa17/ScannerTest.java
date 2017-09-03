@@ -20,6 +20,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import com.sun.beans.util.Cache.Kind;
+
 import cop5556fa17.Scanner.LexicalException;
 import cop5556fa17.Scanner.Token;
 
@@ -137,17 +139,62 @@ public class ScannerTest {
 		Scanner scanner = new Scanner(input).scan();
 		show(input);
 		show(scanner);
-		checkNext(scanner,LSQUARE, 0, 1, 1, 1);
-		checkNext(scanner,LPAREN, 1, 1, 1, 2);
-		checkNext(scanner,RPAREN, 2, 1, 1, 3);
-		checkNext(scanner,COMMA, 3, 1, 1, 4);
-		checkNext(scanner,LPAREN, 4, 1, 1, 5);
-		checkNext(scanner,RPAREN, 5, 1, 1, 6);
-		checkNext(scanner, RSQUARE, 6, 1, 1, 7);
-		checkNext(scanner,SEMI, 7, 1, 1, 8);
-		checkNext(scanner,LPAREN, 9, 1, 2, 1);
-		checkNext(scanner,RPAREN, 10, 1, 2, 2);
-		checkNext(scanner,SEMI, 11, 1, 2, 3);
+		checkNext(scanner, LSQUARE, 0, 1, 1, 1);
+		checkNext(scanner, LPAREN, 	1, 1, 1, 2);
+		checkNext(scanner, RPAREN, 	2, 1, 1, 3);
+		checkNext(scanner, COMMA, 	3, 1, 1, 4);
+		checkNext(scanner, LPAREN, 	4, 1, 1, 5);
+		checkNext(scanner, RPAREN, 	5, 1, 1, 6);
+		checkNext(scanner, RSQUARE,	6, 1, 1, 7);
+		checkNext(scanner, SEMI, 	7, 1, 1, 8);
+		checkNext(scanner, LPAREN, 	9, 1, 2, 1);
+		checkNext(scanner, RPAREN, 	10, 1, 2, 2);
+		checkNext(scanner, SEMI, 	11, 1, 2, 3);
+		checkNextIsEOF(scanner);
+	}
+	
+	@Test
+	public void testOperators() throws LexicalException {
+		String input = "(+)*(-)==?:;";
+		Scanner scanner = new Scanner(input).scan();
+		show(input);
+		show(scanner);
+		checkNext(scanner, LPAREN, 		0, 1, 1, 1);
+		checkNext(scanner, OP_PLUS, 	1, 1, 1, 2);
+		checkNext(scanner, RPAREN,		2, 1, 1, 3);
+		checkNext(scanner, OP_TIMES,	3, 1, 1, 4);
+		checkNext(scanner, LPAREN, 		4, 1, 1, 5);
+		checkNext(scanner, OP_MINUS, 	5, 1, 1, 6);
+		checkNext(scanner, RPAREN, 		6, 1, 1, 7);
+		checkNext(scanner, OP_EQ, 		7, 2, 1, 8);
+		checkNext(scanner, OP_Q, 		9, 1, 1, 10);
+		checkNext(scanner, OP_COLON,	10, 1, 1, 11);
+		checkNext(scanner, SEMI, 		11, 1, 1, 12);
+		checkNextIsEOF(scanner);
+		
+		input = ">= | <= ? / : ** & %;\n"+
+				"> -> !=! < <-\n"+
+				'@';
+		scanner = new Scanner(input).scan();
+		show(input);
+		show(scanner);
+		checkNext(scanner, OP_GE, 		0, 2, 1, 1);
+		checkNext(scanner, OP_OR, 		3, 1, 1, 4);
+		checkNext(scanner, OP_LE, 		5, 2, 1, 6);
+		checkNext(scanner, OP_Q, 		8, 1, 1, 9);
+		checkNext(scanner, OP_DIV,  	10, 1, 1, 11);
+		checkNext(scanner, OP_COLON, 	12, 1, 1, 13);
+		checkNext(scanner, OP_POWER, 	14, 2, 1, 15);
+		checkNext(scanner, OP_AND, 		17, 1, 1, 18);
+		checkNext(scanner, OP_MOD, 		19, 1, 1, 20);
+		checkNext(scanner, SEMI, 		20, 1, 1, 21);
+		checkNext(scanner, OP_GT, 		22, 1, 2, 1);
+		checkNext(scanner, OP_RARROW, 	24, 2, 2, 3);
+		checkNext(scanner, OP_NEQ, 		27, 2, 2, 6);
+		checkNext(scanner, OP_EXCL,		29, 1, 2, 8);
+		checkNext(scanner, OP_LT, 		31, 1, 2, 10);
+		checkNext(scanner, OP_LARROW, 	33, 2, 2, 12);
+		checkNext(scanner, OP_AT, 		36, 1, 3, 1);
 		checkNextIsEOF(scanner);
 	}
 	

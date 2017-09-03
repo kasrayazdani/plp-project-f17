@@ -110,8 +110,10 @@ public class Scanner {
 			}
 			
 			/* Space */
-			else if (Character.isWhitespace(chars[pos]))
+			else if (Character.isWhitespace(chars[pos])) {
 				pos++;
+				g_posInLine++;
+			}
 			else
 				break;
 		}
@@ -391,7 +393,7 @@ public class Scanner {
 					/* Operators */
 					case '=':
 						if (chars[pos+1] == '=') { /* == */
-							tokens.add(new Token(Kind.OP_EQ, pos, 1, g_line, g_posInLine));
+							tokens.add(new Token(Kind.OP_EQ, pos, 2, g_line, g_posInLine));
 							pos = pos+2;
 							g_posInLine = g_posInLine+2;
 						}
@@ -404,7 +406,7 @@ public class Scanner {
 						
 					case '>':
 						if (chars[pos+1] == '=') { /* >= */
-							tokens.add(new Token(Kind.OP_GE, pos, 1, g_line, g_posInLine));
+							tokens.add(new Token(Kind.OP_GE, pos, 2, g_line, g_posInLine));
 							pos = pos+2;
 							g_posInLine = g_posInLine+2;
 						}
@@ -417,12 +419,12 @@ public class Scanner {
 						
 					case '<':
 						if (chars[pos+1] == '=') { /* <= */
-							tokens.add(new Token(Kind.OP_LE, pos, 1, g_line, g_posInLine));
+							tokens.add(new Token(Kind.OP_LE, pos, 2, g_line, g_posInLine));
 							pos = pos+2;
 							g_posInLine = g_posInLine+2;
 						}
 						else if (chars[pos+1] == '-') { /* <- */
-							tokens.add(new Token(Kind.OP_LARROW, pos, 1, g_line, g_posInLine));
+							tokens.add(new Token(Kind.OP_LARROW, pos, 2, g_line, g_posInLine));
 							pos = pos+2;
 							g_posInLine = g_posInLine+2;
 						}
@@ -435,7 +437,7 @@ public class Scanner {
 					
 					case '!':
 						if (chars[pos+1] == '=') { /* != */
-							tokens.add(new Token(Kind.OP_NEQ, pos, 1, g_line, g_posInLine));
+							tokens.add(new Token(Kind.OP_NEQ, pos, 2, g_line, g_posInLine));
 							pos = pos+2;
 							g_posInLine = g_posInLine+2;
 						}
@@ -478,7 +480,7 @@ public class Scanner {
 						
 					case '-':
 						if (chars[pos+1] == '>') { /* -> */
-							tokens.add(new Token(Kind.OP_RARROW, pos, 1, g_line, g_posInLine));
+							tokens.add(new Token(Kind.OP_RARROW, pos, 2, g_line, g_posInLine));
 							pos = pos+2;
 							g_posInLine = g_posInLine+2;
 						}
@@ -491,7 +493,7 @@ public class Scanner {
 						
 					case '*':
 						if (chars[pos+1] == '*') {/* ** */
-							tokens.add(new Token(Kind.OP_POWER, pos, 1, g_line, g_posInLine));
+							tokens.add(new Token(Kind.OP_POWER, pos, 2, g_line, g_posInLine));
 							pos = pos+2;
 							g_posInLine = g_posInLine+2;
 						}
