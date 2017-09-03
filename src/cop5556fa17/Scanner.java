@@ -91,9 +91,30 @@ public class Scanner {
 		reservedWords.put("url", Kind.KW_url);
 		reservedWords.put("file", Kind.KW_file);
 	}
-
+	
+	public static int g_line, g_posInLine;
 	public int skipWhiteSpaces(int pos) {
-		
+		while (pos < chars.length) {
+			/*if (chars[pos] == '/') {
+				
+			}*/
+			
+			/* New Line */
+			/*else*/ if (chars[pos]=='\n') {
+				pos++;
+				g_line++;
+				g_posInLine = 1;
+			}
+			else if (chars[pos]=='\r') {
+				pos = pos++;
+			}
+			
+			/* Space */
+			else if (Character.isWhitespace(chars[pos]))
+				pos++;
+			else
+				break;
+		}
 		return pos;
 	}
 	
@@ -296,6 +317,8 @@ public class Scanner {
 		chars[numChars] = EOFchar;
 		tokens = new ArrayList<Token>();
 		populate_reservedWords();
+		g_line = 1;
+		g_posInLine = 1;
 	}
 
 
@@ -316,7 +339,7 @@ public class Scanner {
 		char ch;
 		System.out.println("chars.length = "+chars.length);
 		while (pos < chars.length) {
-			System.out.println(pos);
+			//System.out.println(pos);
 			switch(state) {
 			case START:
 				pos = skipWhiteSpaces(pos);
@@ -324,14 +347,177 @@ public class Scanner {
 					ch = chars[pos];
 					switch(ch) {
 					case EOFchar:
-						tokens.add(new Token(Kind.EOF, pos, 0, line, posInLine));
+						tokens.add(new Token(Kind.EOF, pos, 0, g_line, g_posInLine));
 						pos++;
 						break;
 					
+					/* Seperators */
 					case ';':
-						tokens.add(new Token(Kind.SEMI, pos, 1, line, posInLine));
+						tokens.add(new Token(Kind.SEMI, pos, 1, g_line, g_posInLine));
 						pos++;
-						posInLine++;
+						g_posInLine++;
+						break;
+						
+					case '(':
+						tokens.add(new Token(Kind.LPAREN, pos, 1, g_line, g_posInLine));
+						pos++;
+						g_posInLine++;
+						break;
+						
+					case ')':
+						tokens.add(new Token(Kind.RPAREN, pos, 1, g_line, g_posInLine));
+						pos++;
+						g_posInLine++;
+						break;
+						
+					case '[':
+						tokens.add(new Token(Kind.LSQUARE, pos, 1, g_line, g_posInLine));
+						pos++;
+						g_posInLine++;
+						break;
+						
+					case ']':
+						tokens.add(new Token(Kind.RSQUARE, pos, 1, g_line, g_posInLine));
+						pos++;
+						g_posInLine++;
+						break;
+						
+					case ',':
+						tokens.add(new Token(Kind.COMMA, pos, 1, g_line, g_posInLine));
+						pos++;
+						g_posInLine++;
+						break;
+						
+					/* Operators */
+					case '=':
+						if (chars[pos+1] == '=') { /* == */
+							tokens.add(new Token(Kind.OP_EQ, pos, 1, g_line, g_posInLine));
+							pos = pos+2;
+							g_posInLine = g_posInLine+2;
+						}
+						else { /* = */
+							tokens.add(new Token(Kind.OP_ASSIGN, pos, 1, g_line, g_posInLine));
+							pos++;
+							g_posInLine++;
+							}
+						break;
+						
+					case '>':
+						if (chars[pos+1] == '=') { /* >= */
+							tokens.add(new Token(Kind.OP_GE, pos, 1, g_line, g_posInLine));
+							pos = pos+2;
+							g_posInLine = g_posInLine+2;
+						}
+						else { /* > */
+							tokens.add(new Token(Kind.OP_GT, pos, 1, g_line, g_posInLine));
+							pos++;
+							g_posInLine++;
+						}
+						break;
+						
+					case '<':
+						if (chars[pos+1] == '=') { /* <= */
+							tokens.add(new Token(Kind.OP_LE, pos, 1, g_line, g_posInLine));
+							pos = pos+2;
+							g_posInLine = g_posInLine+2;
+						}
+						else if (chars[pos+1] == '-') { /* <- */
+							tokens.add(new Token(Kind.OP_LARROW, pos, 1, g_line, g_posInLine));
+							pos = pos+2;
+							g_posInLine = g_posInLine+2;
+						}
+						else { /* < */
+							tokens.add(new Token(Kind.OP_LT, pos, 1, g_line, g_posInLine));
+							pos++;
+							g_posInLine++;
+						}
+						break;
+					
+					case '!':
+						if (chars[pos+1] == '=') { /* != */
+							tokens.add(new Token(Kind.OP_NEQ, pos, 1, g_line, g_posInLine));
+							pos = pos+2;
+							g_posInLine = g_posInLine+2;
+						}
+						else { /* ! */
+							tokens.add(new Token(Kind.OP_EXCL, pos, 1, g_line, g_posInLine));
+							pos++;
+							g_posInLine++;
+						}
+						break;
+						
+					case '?':
+						tokens.add(new Token(Kind.OP_Q, pos, 1, g_line, g_posInLine));
+						pos++;
+						g_posInLine++;
+						break;
+						
+					case ':':
+						tokens.add(new Token(Kind.OP_COLON, pos, 1, g_line, g_posInLine));
+						pos++;
+						g_posInLine++;
+						break;
+						
+					case '&':
+						tokens.add(new Token(Kind.OP_AND, pos, 1, g_line, g_posInLine));
+						pos++;
+						g_posInLine++;
+						break;
+						
+					case '|':
+						tokens.add(new Token(Kind.OP_OR, pos, 1, g_line, g_posInLine));
+						pos++;
+						g_posInLine++;
+						break;
+						
+					case '+':
+						tokens.add(new Token(Kind.OP_PLUS, pos, 1, g_line, g_posInLine));
+						pos++;
+						g_posInLine++;
+						break;
+						
+					case '-':
+						if (chars[pos+1] == '>') { /* -> */
+							tokens.add(new Token(Kind.OP_RARROW, pos, 1, g_line, g_posInLine));
+							pos = pos+2;
+							g_posInLine = g_posInLine+2;
+						}
+						else { /* - */
+							tokens.add(new Token(Kind.OP_MINUS, pos, 1, g_line, g_posInLine));
+							pos++;
+							g_posInLine++;
+						}
+						break;
+						
+					case '*':
+						if (chars[pos+1] == '*') {/* ** */
+							tokens.add(new Token(Kind.OP_POWER, pos, 1, g_line, g_posInLine));
+							pos = pos+2;
+							g_posInLine = g_posInLine+2;
+						}
+						else { /* * */
+							tokens.add(new Token(Kind.OP_TIMES, pos, 1, g_line, g_posInLine));
+							pos++;
+							g_posInLine++;
+						}
+						break;
+						
+					case '/':
+						tokens.add(new Token(Kind.OP_DIV, pos, 1, g_line, g_posInLine));
+						pos++;
+						g_posInLine++;
+						break;
+						
+					case '%':
+						tokens.add(new Token(Kind.OP_MOD, pos, 1, g_line, g_posInLine));
+						pos++;
+						g_posInLine++;
+						break;
+					
+					case '@':
+						tokens.add(new Token(Kind.OP_AT, pos, 1, g_line, g_posInLine));
+						pos++;
+						g_posInLine++;
 						break;
 					}
 				}
