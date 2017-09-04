@@ -35,6 +35,20 @@ public class Scanner {
 		public int getPos() { return pos; }
 
 	}
+	
+	@SuppressWarnings("serial")
+	public static class InvalidIntLitException extends Exception {
+		
+		String s;
+
+		public InvalidIntLitException(String message, String s) {
+			super(message);
+			this.s = s;
+		}
+		
+		public String getString() { return s; }
+
+	}
 
 	public static enum Kind {
 		IDENTIFIER, INTEGER_LITERAL, BOOLEAN_LITERAL, STRING_LITERAL, 
@@ -52,7 +66,9 @@ public class Scanner {
 	
 	public static enum State {
 		START,
-		END;
+		IDENTIFIER,
+		DIGIT,
+		STRING_LITERAL,
 	}
 	
 	/*
@@ -521,15 +537,74 @@ public class Scanner {
 						pos++;
 						g_posInLine++;
 						break;
+						
+					default:
+						if (Character.isJavaIdentifierStart(chars[pos])) {
+							state = State.IDENTIFIER;
+							pos++;
+						}
+						else if (Character.isDigit(chars[pos])) {
+							if (chars[pos]=='0')
+								tokens.add(new Token(Kind.INTEGER_LITERAL, pos, 1, g_line, g_posInLine));
+							else
+								state = State.DIGIT;
+							pos++;
+						}
+						else if (chars[pos]=='\\' && chars[pos]=='\"') {
+							state = State.STRING_LITERAL;
+							pos ++;
+						}
+						else
+							throw new LexicalException("Unknown Symbol", pos);
 					}
 				}
 				break;
 			
-			default:
+			case IDENTIFIER:
+				int length = 1;
+				while (pos<chars.length && Character.isJavaIdentifierPart(chars[pos])) {
+					length++;
+					pos++;
+					g_posInLine++;
+				}
+				Token token = new Token(Kind.IDENTIFIER, pos-length+1, length, g_line, g_posInLine-length+1);
+				if (reservedWords.containsKey(token.getText()))
+					tokens.add(new Token(reservedWords.get(token.getText()), pos-length+1, length, g_line, g_posInLine-length+1));
+
+				else if (token.getText().equals("true") || token.getText().equals("false"))
+					tokens.add(new Token(Kind.BOOLEAN_LITERAL, pos-length+1, length, g_line, g_posInLine-length+1));
+				
+				else
+					tokens.add(token);
+				
+				state = State.START;
 				break;
+			
+			case DIGIT:
+				int num_digits = 1;
+				while (pos<chars.length && Character.isDigit(chars[pos])) {
+					num_digits++;
+					pos++;
+					g_posInLine++;
+				}
+				Token integer_literal = new Token(Kind.INTEGER_LITERAL, pos-num_digits+1, num_digits, g_line, g_posInLine-num_digits+1);
+				try {
+					Integer.parseInt(integer_literal.getText());
+					tokens.add(integer_literal);
+				}
+				catch (NumberFormatException e) {
+					throw new LexicalException("Integer Overflow.", pos-num_digits+1);
+				}
+				state = State.START;
+				break;
+				
+			case STRING_LITERAL:
+				break;
+			
+			default:
+				assert false;
 			}
 		}
-		//tokens.add(new Token(Kind.EOF, pos, 0, line, posInLine));
 		return this;
 
 	}
