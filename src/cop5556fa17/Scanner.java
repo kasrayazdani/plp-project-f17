@@ -542,6 +542,7 @@ public class Scanner {
 						if (Character.isJavaIdentifierStart(chars[pos])) {
 							state = State.IDENTIFIER;
 							pos++;
+							g_posInLine++;
 						}
 						else if (Character.isDigit(chars[pos])) {
 							if (chars[pos]=='0')
@@ -549,6 +550,7 @@ public class Scanner {
 							else
 								state = State.DIGIT;
 							pos++;
+							g_posInLine++;
 						}
 						else if (chars[pos]=='\\' && chars[pos]=='\"') {
 							state = State.STRING_LITERAL;
@@ -567,12 +569,12 @@ public class Scanner {
 					pos++;
 					g_posInLine++;
 				}
-				Token token = new Token(Kind.IDENTIFIER, pos-length+1, length, g_line, g_posInLine-length+1);
+				Token token = new Token(Kind.IDENTIFIER, pos-length, length, g_line, g_posInLine-length+1);
 				if (reservedWords.containsKey(token.getText()))
-					tokens.add(new Token(reservedWords.get(token.getText()), pos-length+1, length, g_line, g_posInLine-length+1));
+					tokens.add(new Token(reservedWords.get(token.getText()), pos-length, length, g_line, g_posInLine-length));
 
 				else if (token.getText().equals("true") || token.getText().equals("false"))
-					tokens.add(new Token(Kind.BOOLEAN_LITERAL, pos-length+1, length, g_line, g_posInLine-length+1));
+					tokens.add(new Token(Kind.BOOLEAN_LITERAL, pos-length, length, g_line, g_posInLine-length+1));
 				
 				else
 					tokens.add(token);
@@ -587,13 +589,13 @@ public class Scanner {
 					pos++;
 					g_posInLine++;
 				}
-				Token integer_literal = new Token(Kind.INTEGER_LITERAL, pos-num_digits+1, num_digits, g_line, g_posInLine-num_digits+1);
+				Token integer_literal = new Token(Kind.INTEGER_LITERAL, pos-num_digits, num_digits, g_line, g_posInLine-num_digits);
 				try {
 					Integer.parseInt(integer_literal.getText());
 					tokens.add(integer_literal);
 				}
 				catch (NumberFormatException e) {
-					throw new LexicalException("Integer Overflow.", pos-num_digits+1);
+					throw new LexicalException("Integer Overflow in line " + g_line + " at column " + (g_posInLine-num_digits), pos);
 				}
 				state = State.START;
 				break;
