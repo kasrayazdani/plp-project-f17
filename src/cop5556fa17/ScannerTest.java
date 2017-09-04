@@ -257,7 +257,7 @@ public class ScannerTest {
 	public void testIdentifier() throws LexicalException {
 		String input = "int p=DEF_X;\n" + 
 					   "int q=DEF_Y;\n" + 
-					   "int sum=p+q;";
+					   "int sum <- (p+q);";
 		Scanner scanner = new Scanner(input).scan();
 		show(input);
 		show(scanner);
@@ -273,11 +273,13 @@ public class ScannerTest {
 		checkNext(scanner, SEMI, 		24, 1, 2, 12);
 		checkNext(scanner, KW_int, 		26, 3, 3, 1);
 		checkNext(scanner, IDENTIFIER, 	30, 3, 3, 5);
-		checkNext(scanner, OP_ASSIGN, 	33, 1, 3, 8);
-		checkNext(scanner, IDENTIFIER, 	34, 1, 3, 9);
-		checkNext(scanner, OP_PLUS, 	35, 1, 3, 10);
-		checkNext(scanner, IDENTIFIER, 	36, 1, 3, 11);
-		checkNext(scanner, SEMI, 		37, 1, 3, 12);
+		checkNext(scanner, OP_LARROW, 	34, 2, 3, 9);
+		checkNext(scanner, LPAREN, 		37, 1, 3, 12);
+		checkNext(scanner, IDENTIFIER, 	38, 1, 3, 13);
+		checkNext(scanner, OP_PLUS, 	39, 1, 3, 14);
+		checkNext(scanner, IDENTIFIER, 	40, 1, 3, 15);
+		checkNext(scanner, RPAREN, 		41, 1, 3, 16);
+		checkNext(scanner, SEMI, 		42, 1, 3, 17);
 		checkNextIsEOF(scanner);
 	}
 	
