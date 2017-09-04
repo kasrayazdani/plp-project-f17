@@ -283,6 +283,30 @@ public class ScannerTest {
 		checkNextIsEOF(scanner);
 	}
 	
+	@Test
+	public void testBooleanLiteral() throws LexicalException {
+		String input = "if x==5:\n" + 
+					   "  flag=true;\n" + 
+					   "flag=false;";
+		Scanner scanner = new Scanner(input).scan();
+		show(input);
+		show(scanner);
+		checkNext(scanner, IDENTIFIER, 		0, 2, 1, 1);
+		checkNext(scanner, KW_x, 			3, 1, 1, 4);
+		checkNext(scanner, OP_EQ, 			4, 2, 1, 5);
+		checkNext(scanner, INTEGER_LITERAL,	6, 1, 1, 7);
+		checkNext(scanner, OP_COLON, 		7, 1, 1, 8);
+		checkNext(scanner, IDENTIFIER, 		11, 4, 2, 3);
+		checkNext(scanner, OP_ASSIGN, 		15, 1, 2, 7);
+		checkNext(scanner, BOOLEAN_LITERAL,	16, 4, 2, 8);
+		checkNext(scanner, SEMI, 			20, 1, 2, 12);
+		checkNext(scanner, IDENTIFIER, 		22, 4, 3, 1);
+		checkNext(scanner, OP_ASSIGN, 		26, 1, 3, 5);
+		checkNext(scanner, BOOLEAN_LITERAL,	27, 5, 3, 6);
+		checkNext(scanner, SEMI, 			32, 1, 3, 11);
+		checkNextIsEOF(scanner);		
+		
+	}
 	/**
 	 * This example shows how to test that your scanner is behaving when the
 	 * input is illegal.  In this case, we are giving it a String literal
