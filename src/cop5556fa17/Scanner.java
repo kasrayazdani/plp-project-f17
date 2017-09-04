@@ -569,12 +569,12 @@ public class Scanner {
 					pos++;
 					g_posInLine++;
 				}
-				Token token = new Token(Kind.IDENTIFIER, pos-length, length, g_line, g_posInLine-length+1);
+				Token token = new Token(Kind.IDENTIFIER, pos-length, length, g_line, g_posInLine-length);
 				if (reservedWords.containsKey(token.getText()))
 					tokens.add(new Token(reservedWords.get(token.getText()), pos-length, length, g_line, g_posInLine-length));
 
 				else if (token.getText().equals("true") || token.getText().equals("false"))
-					tokens.add(new Token(Kind.BOOLEAN_LITERAL, pos-length, length, g_line, g_posInLine-length+1));
+					tokens.add(new Token(Kind.BOOLEAN_LITERAL, pos-length, length, g_line, g_posInLine-length));
 				
 				else
 					tokens.add(token);
