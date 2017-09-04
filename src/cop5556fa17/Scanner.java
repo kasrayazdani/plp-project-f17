@@ -111,12 +111,18 @@ public class Scanner {
 	public static int g_line, g_posInLine;
 	public int skipWhiteSpaces(int pos) {
 		while (pos < chars.length) {
-			/*if (chars[pos] == '/') {
-				
-			}*/
+			if (chars[pos] == '/') {
+				if (chars[pos+1] == '/') {
+					pos = pos+2;
+					while (chars[pos]!='\n')
+						pos++;
+				}
+				else
+					break;
+			}
 			
 			/* New Line */
-			/*else*/ if (chars[pos]=='\n') {
+			else if (chars[pos]=='\n') {
 				pos++;
 				g_line++;
 				g_posInLine = 1;

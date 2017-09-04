@@ -305,7 +305,23 @@ public class ScannerTest {
 		checkNext(scanner, BOOLEAN_LITERAL,	27, 5, 3, 6);
 		checkNext(scanner, SEMI, 			32, 1, 3, 11);
 		checkNextIsEOF(scanner);		
+	}
+	
+	@Test
+	public void testComment() throws LexicalException {
+		String input = "//This is a comment\n" + 
+					   "p = 5+4; //Junk\n";
 		
+		Scanner scanner = new Scanner(input).scan();
+		show(input);
+		show(scanner);
+		checkNext(scanner, IDENTIFIER,		20, 1, 2, 1);
+		checkNext(scanner, OP_ASSIGN, 		22, 1, 2, 3);
+		checkNext(scanner, INTEGER_LITERAL,	24, 1, 2, 5);
+		checkNext(scanner, OP_PLUS, 		25, 1, 2, 6);
+		checkNext(scanner, INTEGER_LITERAL, 26, 1, 2, 7);
+		checkNext(scanner, SEMI,			27, 1, 2, 8);
+		checkNextIsEOF(scanner);
 	}
 	/**
 	 * This example shows how to test that your scanner is behaving when the
