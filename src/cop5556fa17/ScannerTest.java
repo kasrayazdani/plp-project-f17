@@ -235,6 +235,29 @@ public class ScannerTest {
 		}
 	}
 	
+	@Test
+	public void testReservedWords() throws LexicalException {
+		String input = "DEF_X=5;\n" + 
+					   "DEF_Y=6;";
+		Scanner scanner = new Scanner(input).scan();
+		show(input);
+		show(scanner);
+		checkNext(scanner, KW_DEF_X,		0, 5, 1, 1);
+		checkNext(scanner, OP_ASSIGN,		5, 1, 1, 6);
+		checkNext(scanner, INTEGER_LITERAL,	6, 1, 1, 7);
+		checkNext(scanner, SEMI,			7, 1, 1, 8);
+		checkNext(scanner, KW_DEF_Y,		9, 5, 2, 1);
+		checkNext(scanner, OP_ASSIGN,		14, 1, 2, 6);
+		checkNext(scanner, INTEGER_LITERAL,	15, 1, 2, 7);
+		checkNext(scanner, SEMI,			16, 1, 2, 8);
+		checkNextIsEOF(scanner);	
+	} 
+	
+	@Test
+	public void testIdentifier() throws LexicalException {
+		
+	}
+	
 	/**
 	 * This example shows how to test that your scanner is behaving when the
 	 * input is illegal.  In this case, we are giving it a String literal
