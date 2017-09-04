@@ -595,7 +595,7 @@ public class Scanner {
 					tokens.add(integer_literal);
 				}
 				catch (NumberFormatException e) {
-					throw new LexicalException("Integer Overflow in line " + g_line + " at column " + (g_posInLine-num_digits), pos);
+					throw new LexicalException("Integer Overflow in line " + g_line + " at column " + (g_posInLine-num_digits) + '\n', pos);
 				}
 				state = State.START;
 				break;
