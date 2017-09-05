@@ -558,9 +558,10 @@ public class Scanner {
 							pos++;
 							g_posInLine++;
 						}
-						else if (chars[pos]=='\\' && chars[pos]=='\"') {
+						else if (chars[pos]=='\"') {
 							state = State.STRING_LITERAL;
 							pos ++;
+							g_posInLine++;
 						}
 						else
 							throw new LexicalException("Unknown Symbol", pos);
@@ -568,6 +569,27 @@ public class Scanner {
 				}
 				break;
 			
+			case STRING_LITERAL:
+				int strLit_length = 1;
+				while (pos<chars.length) {
+					if (chars[pos]=='\"') {	
+						strLit_length++;
+						pos++;
+						g_posInLine++;
+						break;
+					}
+					if (chars[pos]==EOFchar)
+						throw new LexicalException("Reached End of file! Missing \"\n", pos);
+					strLit_length++;
+					pos++;
+					g_posInLine++;
+				}
+				
+				Token string_literal = new Token(Kind.STRING_LITERAL, pos-strLit_length, strLit_length, g_line, g_posInLine-strLit_length);
+				tokens.add(string_literal);
+				state = State.START;
+				break;
+				
 			case IDENTIFIER:
 				int length = 1;
 				while (pos<chars.length && Character.isJavaIdentifierPart(chars[pos])) {
@@ -604,9 +626,6 @@ public class Scanner {
 					throw new LexicalException("Integer Overflow in line " + g_line + " at column " + (g_posInLine-num_digits) + '\n', pos);
 				}
 				state = State.START;
-				break;
-				
-			case STRING_LITERAL:
 				break;
 			
 			default:

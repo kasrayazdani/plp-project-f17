@@ -323,6 +323,18 @@ public class ScannerTest {
 		checkNext(scanner, SEMI,			27, 1, 2, 8);
 		checkNextIsEOF(scanner);
 	}
+	
+	@Test
+	public void testStringLiteral() throws LexicalException {
+		String input = "\"Junk\\n\";\n";
+		Scanner scanner = new Scanner(input).scan();
+		show(input);
+		show(scanner);
+		checkNext(scanner, STRING_LITERAL, 0, 8, 1, 1);
+		checkNext(scanner, SEMI, 8, 1, 1, 9);
+		checkNextIsEOF(scanner);
+	}
+	
 	/**
 	 * This example shows how to test that your scanner is behaving when the
 	 * input is illegal.  In this case, we are giving it a String literal
@@ -342,7 +354,7 @@ public class ScannerTest {
 	 * 
 	 * @throws LexicalException
 	 */
-	/*@Test
+	@Test
 	public void failUnclosedStringLiteral() throws LexicalException {
 		String input = "\" greetings  ";
 		show(input);
@@ -354,7 +366,7 @@ public class ScannerTest {
 			assertEquals(13,e.getPos());
 			throw e;
 		}
-	}*/
+	}
 
 
 }
