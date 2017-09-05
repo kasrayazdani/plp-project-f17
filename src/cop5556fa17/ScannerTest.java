@@ -20,7 +20,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import com.sun.beans.util.Cache.Kind;
+//import com.sun.beans.util.Cache.Kind;
 
 import cop5556fa17.Scanner.LexicalException;
 import cop5556fa17.Scanner.Token;
@@ -331,8 +331,8 @@ public class ScannerTest {
 		Scanner scanner = new Scanner(input).scan();
 		show(input);
 		show(scanner);
-		checkNext(scanner, STRING_LITERAL, 0, 8, 1, 1);
-		checkNext(scanner, SEMI, 8, 1, 1, 9);
+		checkNext(scanner, STRING_LITERAL, 	0, 8, 1, 1);
+		checkNext(scanner, SEMI, 			8, 1, 1, 9);
 		checkNextIsEOF(scanner);
 	}
 	

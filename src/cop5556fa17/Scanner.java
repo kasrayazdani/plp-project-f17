@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import com.sun.xml.internal.ws.util.xml.XMLReaderComposite.State;
+//import com.sun.xml.internal.ws.util.xml.XMLReaderComposite.State;
 
 public class Scanner {
 	
