@@ -579,7 +579,7 @@ public class Scanner {
 						break;
 					}
 					if (chars[pos]==EOFchar)
-						throw new LexicalException("Reached End of file! Missing \"\n", pos);
+						throw new LexicalException("Reached End of file! Missing '\"'\n", pos);
 					strLit_length++;
 					pos++;
 					g_posInLine++;
@@ -623,7 +623,7 @@ public class Scanner {
 					tokens.add(integer_literal);
 				}
 				catch (NumberFormatException e) {
-					throw new LexicalException("Integer Overflow in line " + g_line + " at column " + (g_posInLine-num_digits) + '\n', pos);
+					throw new LexicalException("Integer Overflow in line " + g_line + " at column " + (g_posInLine-num_digits) + '\n', (g_posInLine-num_digits));
 				}
 				state = State.START;
 				break;

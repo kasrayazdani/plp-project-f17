@@ -231,6 +231,7 @@ public class ScannerTest {
 			show(scanner);
 		} catch (LexicalException e){
 			show(e);
+			assertEquals(1, e.getPos());
 			throw e;
 		}
 	}
