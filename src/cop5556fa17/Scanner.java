@@ -573,7 +573,7 @@ public class Scanner {
 				int strLit_length = 1;
 				while (pos<chars.length) {
 					if (chars[pos]=='\n' || chars[pos]=='\r') {
-						throw new LexicalException("Bad Character in line " + g_line + " at column " + pos, pos);
+						throw new LexicalException("Bad Character in line " + g_line + " at column " + g_posInLine, g_posInLine);
 					}
 					
 					if (chars[pos]=='\"') {	

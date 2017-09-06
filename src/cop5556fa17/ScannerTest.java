@@ -345,7 +345,7 @@ public class ScannerTest {
 			new Scanner(input).scan();
 		} catch (LexicalException e) {
 			show(e);
-			assertEquals(9,e.getPos());
+			assertEquals(10,e.getPos());
 			throw e;
 		}
 	}
