@@ -572,14 +572,21 @@ public class Scanner {
 			case STRING_LITERAL:
 				int strLit_length = 1;
 				while (pos<chars.length) {
+					if (chars[pos]=='\n' || chars[pos]=='\r') {
+						throw new LexicalException("Bad Character in line " + g_line + " at column " + pos, pos);
+					}
+					
 					if (chars[pos]=='\"') {	
 						strLit_length++;
 						pos++;
 						g_posInLine++;
 						break;
 					}
-					if (chars[pos]==EOFchar)
+					
+					if (chars[pos]==EOFchar) {
 						throw new LexicalException("Reached End of file! Missing '\"'\n", pos);
+					}
+					
 					strLit_length++;
 					pos++;
 					g_posInLine++;

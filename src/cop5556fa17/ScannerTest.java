@@ -336,6 +336,20 @@ public class ScannerTest {
 		checkNextIsEOF(scanner);
 	}
 	
+	@Test
+	public void testStringLiteral2() throws LexicalException {
+		String input ="\"Junk is \r\n Junk\"";
+		show(input);
+		thrown.expect(LexicalException.class);
+		try {
+			new Scanner(input).scan();
+		} catch (LexicalException e) {
+			show(e);
+			assertEquals(9,e.getPos());
+			throw e;
+		}
+	}
+	
 	/**
 	 * This example shows how to test that your scanner is behaving when the
 	 * input is illegal.  In this case, we are giving it a String literal
