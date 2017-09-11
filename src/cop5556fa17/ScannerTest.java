@@ -382,6 +382,20 @@ public class ScannerTest {
 			throw e;
 		}
 	}
+	
+	@Test
+	public void failStringLiteral() throws LexicalException {
+		String input = "\" greet\\ings\"";
+		show(input);
+		thrown.expect(LexicalException.class);  //Tell JUnit to expect a LexicalException
+		try {
+			new Scanner(input).scan();
+		} catch (LexicalException e) {  //
+			show(e);
+			assertEquals(9,e.getPos());
+			throw e;
+		}
+	}
 
 
 }

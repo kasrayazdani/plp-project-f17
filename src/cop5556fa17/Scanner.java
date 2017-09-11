@@ -361,7 +361,7 @@ public class Scanner {
 		int posInLine = 1;
 		State state = State.START;
 		char ch;
-		System.out.println("chars.length = "+chars.length);
+		//System.out.println("chars.length = "+chars.length);
 		while (pos < chars.length) {
 			//System.out.println(pos);
 			switch(state) {
@@ -574,6 +574,21 @@ public class Scanner {
 				while (pos<chars.length) {
 					if (chars[pos]=='\n' || chars[pos]=='\r') {
 						throw new LexicalException("Bad Character in line " + g_line + " at column " + g_posInLine, g_posInLine);
+					}
+					
+					if (chars[pos]=='\\') {
+						strLit_length++;
+						pos++;
+						g_posInLine++;
+						if (!(chars[pos]=='b'
+								|| chars[pos]=='t'
+								|| chars[pos]=='n'
+								|| chars[pos]=='f'
+								|| chars[pos]=='r'
+								|| chars[pos]=='\"'
+								|| chars[pos]=='\''
+								|| chars[pos]=='\\'))
+							throw new LexicalException("Bad Character in line " + g_line + " at column " + g_posInLine + "\n", g_posInLine);
 					}
 					
 					if (chars[pos]=='\"') {	
