@@ -580,14 +580,7 @@ public class Scanner {
 						strLit_length++;
 						pos++;
 						g_posInLine++;
-						if (!(chars[pos]=='b'
-								|| chars[pos]=='t'
-								|| chars[pos]=='n'
-								|| chars[pos]=='f'
-								|| chars[pos]=='r'
-								|| chars[pos]=='\"'
-								|| chars[pos]=='\''
-								|| chars[pos]=='\\'))
+						if (!(Arrays.asList('b','t','n','f','r','\"','\'','\\').contains(chars[pos])))
 							throw new LexicalException("Bad Character in line " + g_line + " at column " + g_posInLine + "\n", g_posInLine);
 					}
 					
