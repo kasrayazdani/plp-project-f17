@@ -128,7 +128,12 @@ public class Scanner {
 				g_posInLine = 1;
 			}
 			else if (chars[pos]=='\r') {
-				pos = pos++;
+				pos++;
+				if (chars[pos]=='\n') {
+					pos++;
+				}
+				g_line++;
+				g_posInLine = 1;
 			}
 			
 			/* Space */
@@ -564,7 +569,7 @@ public class Scanner {
 							g_posInLine++;
 						}
 						else
-							throw new LexicalException("Unknown Symbol", pos);
+							throw new LexicalException("Unknown Symbol: " + chars[pos] + "\n", g_posInLine);
 					}
 				}
 				break;

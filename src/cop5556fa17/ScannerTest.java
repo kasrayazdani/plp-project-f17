@@ -134,6 +134,17 @@ public class ScannerTest {
 	}
 	
 	@Test
+	public void testWhiteSpace() throws LexicalException {
+		String input = "\n\r\r\nJunk;";
+		Scanner scanner = new Scanner(input).scan();
+		show(input);
+		show(scanner);
+		checkNext(scanner, IDENTIFIER,	4, 4, 4, 1);
+		checkNext(scanner, SEMI,		8, 1, 4, 5);
+		checkNextIsEOF(scanner);
+	}
+	
+	@Test
 	public void testSeperators() throws LexicalException {
 		String input = "[(),()];\n();";
 		Scanner scanner = new Scanner(input).scan();
@@ -365,6 +376,17 @@ public class ScannerTest {
 		show(scanner);
 		checkNext(scanner, STRING_LITERAL, 0, 4, 1, 1);
 		checkNextIsEOF(scanner);
+		
+		input = "\"abc\\\"a";
+		show(input);
+		thrown.expect(LexicalException.class);  //Tell JUnit to expect a LexicalException
+		try {
+			new Scanner(input).scan();
+		} catch (LexicalException e) {  //
+			show(e);
+			assertEquals(7,e.getPos());
+			throw e;
+		}
 	}
 	
 	@Test
@@ -381,6 +403,19 @@ public class ScannerTest {
 		}
 	}
 	
+	@Test
+	public void testIllegalChar() throws LexicalException {
+		String input = "char #";
+		show(input);
+		thrown.expect(LexicalException.class);  //Tell JUnit to expect a LexicalException
+		try {
+			new Scanner(input).scan();
+		} catch (LexicalException e) {  //
+			show(e);
+			assertEquals(6,e.getPos());
+			throw e;
+		}
+	}
 	/**
 	 * This example shows how to test that your scanner is behaving when the
 	 * input is illegal.  In this case, we are giving it a String literal
@@ -410,6 +445,20 @@ public class ScannerTest {
 		} catch (LexicalException e) {  //
 			show(e);
 			assertEquals(13,e.getPos());
+			throw e;
+		}
+	}
+	
+	@Test
+	public void failUnclosedStringLiteral2() throws LexicalException {
+		String input = "\"\"\"";
+		show(input);
+		thrown.expect(LexicalException.class);  //Tell JUnit to expect a LexicalException
+		try {
+			new Scanner(input).scan();
+		} catch (LexicalException e) {  //
+			show(e);
+			assertEquals(3,e.getPos());
 			throw e;
 		}
 	}
