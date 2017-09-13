@@ -404,6 +404,27 @@ public class ScannerTest {
 	}
 	
 	@Test
+	public void failStringLiteral2() throws LexicalException {
+		String input = "\"\bABC\"";
+		Scanner scanner = new Scanner(input).scan();
+		show(input);
+		show(scanner);
+		checkNext(scanner, STRING_LITERAL, 0, 6, 1, 1);
+		checkNextIsEOF(scanner);
+		
+		input = "\"\nABC\"";
+		show(input);
+		thrown.expect(LexicalException.class);  //Tell JUnit to expect a LexicalException
+		try {
+			new Scanner(input).scan();
+		} catch (LexicalException e) {  //
+			show(e);
+			assertEquals(2,e.getPos());
+			throw e;
+		}
+	}
+	
+	@Test
 	public void testIllegalChar() throws LexicalException {
 		String input = "char #";
 		show(input);
@@ -416,6 +437,7 @@ public class ScannerTest {
 			throw e;
 		}
 	}
+	
 	/**
 	 * This example shows how to test that your scanner is behaving when the
 	 * input is illegal.  In this case, we are giving it a String literal
