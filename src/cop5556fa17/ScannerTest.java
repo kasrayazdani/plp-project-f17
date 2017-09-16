@@ -293,6 +293,13 @@ public class ScannerTest {
 		checkNext(scanner, RPAREN, 		41, 1, 3, 16);
 		checkNext(scanner, SEMI, 		42, 1, 3, 17);
 		checkNextIsEOF(scanner);
+		
+		input = "junk";
+		show(input);
+		scanner = new Scanner(input).scan();
+		show(scanner);
+		checkNext(scanner, IDENTIFIER, 0, 4, 1, 1);
+		checkNextIsEOF(scanner);
 	}
 	
 	@Test
@@ -438,6 +445,16 @@ public class ScannerTest {
 		}
 	}
 	
+	@Test
+	public void testIllegalCharInComment() throws LexicalException {
+		String input = "beginIdent // comment has illegal char ^#~ is totally legal \n endIdent";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();
+		show(scanner);
+		checkNext(scanner,IDENTIFIER,	0,10,1,1);
+		checkNext(scanner,IDENTIFIER,	62,8,2,2);
+		checkNextIsEOF(scanner);
+	}
 	/**
 	 * This example shows how to test that your scanner is behaving when the
 	 * input is illegal.  In this case, we are giving it a String literal

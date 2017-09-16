@@ -111,14 +111,10 @@ public class Scanner {
 	public static int g_line, g_posInLine;
 	public int skipWhiteSpaces(int pos) {
 		while (pos < chars.length) {
-			if (chars[pos] == '/') {
-				if (chars[pos+1] == '/') {
-					pos = pos+2;
-					while (chars[pos]!='\n')
-						pos++;
-				}
-				else
-					break;
+			if (chars[pos] == '/' && chars[pos+1]=='/') {
+				pos = pos+2;
+				while (chars[pos]!='\n')
+					pos++;
 			}
 			
 			/* New Line */
@@ -554,6 +550,7 @@ public class Scanner {
 							state = State.IDENTIFIER;
 							pos++;
 							g_posInLine++;
+							//System.out.println(chars[pos-1]);
 						}
 						else if (Character.isDigit(chars[pos])) {
 							if (chars[pos]=='0')
@@ -617,7 +614,8 @@ public class Scanner {
 				
 			case IDENTIFIER:
 				int length = 1;
-				while (pos<chars.length && Character.isJavaIdentifierPart(chars[pos])) {
+				while (pos<chars.length && Character.isJavaIdentifierPart(chars[pos]) && chars[pos]!=EOFchar) {
+					//System.out.println(pos+","+g_posInLine+":"+chars[pos]+"|"+length);
 					length++;
 					pos++;
 					g_posInLine++;
