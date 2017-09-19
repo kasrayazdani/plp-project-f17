@@ -20,6 +20,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import cop5556fa17.Scanner.Kind;
+
 //import com.sun.beans.util.Cache.Kind;
 
 import cop5556fa17.Scanner.LexicalException;
@@ -440,7 +442,7 @@ public class ScannerTest {
 			new Scanner(input).scan();
 		} catch (LexicalException e) {  //
 			show(e);
-			assertEquals(6,e.getPos());
+			assertEquals(5,e.getPos());
 			throw e;
 		}
 	}
@@ -454,6 +456,44 @@ public class ScannerTest {
 		checkNext(scanner,IDENTIFIER,	0,10,1,1);
 		checkNext(scanner,IDENTIFIER,	62,8,2,2);
 		checkNextIsEOF(scanner);
+	}
+	
+	@Test
+	public void testDiv() throws LexicalException {
+		String input = "/ /// Hoping this is /// still in comment. \r\n / //";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();
+		show(scanner);
+		checkNext(scanner, OP_DIV, 0, 1, 1, 1);
+		checkNext(scanner, OP_DIV, 46, 1, 2, 2);
+		checkNextIsEOF(scanner);
+	}
+	
+	@Test
+	public void testComments() throws LexicalException {
+		String input = "//   \nabc def // ... \n33 jkl\n//xx";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();
+		show(scanner);
+		checkNext(scanner, IDENTIFIER,		6, 3, 2, 1);
+		checkNext(scanner, IDENTIFIER,		10, 3, 2, 5);
+		checkNext(scanner, INTEGER_LITERAL,	22, 2, 3, 1);
+		checkNext(scanner, IDENTIFIER,		25, 3, 3, 4);
+		checkNextIsEOF(scanner);
+	}
+	
+	@Test
+	public void failIllegalChar() throws LexicalException {
+		String input = "#";
+		show(input);
+		thrown.expect(LexicalException.class);  //Tell JUnit to expect a LexicalException
+		try {
+			new Scanner(input).scan();
+		} catch (LexicalException e) {  //
+			show(e);
+			assertEquals(0,e.getPos());
+			throw e;
+		}
 	}
 	/**
 	 * This example shows how to test that your scanner is behaving when the

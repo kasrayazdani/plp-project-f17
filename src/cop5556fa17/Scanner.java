@@ -113,8 +113,11 @@ public class Scanner {
 		while (pos < chars.length) {
 			if (chars[pos] == '/' && chars[pos+1]=='/') {
 				pos = pos+2;
-				while (chars[pos]!='\n')
+				g_posInLine = g_posInLine+2;
+				while (chars[pos]!=EOFchar && chars[pos]!='\n') {
 					pos++;
+					g_posInLine++;
+				}
 			}
 			
 			/* New Line */
@@ -566,7 +569,7 @@ public class Scanner {
 							g_posInLine++;
 						}
 						else
-							throw new LexicalException("Unknown Symbol: " + chars[pos] + "\n", g_posInLine);
+							throw new LexicalException("Unknown Symbol: " + chars[pos] + "\n", pos);
 					}
 				}
 				break;
