@@ -70,6 +70,20 @@ public class SimpleParserTest {
 		show(scanner);   //Display the Scanner
 		SimpleParser parser = new SimpleParser(scanner);  //
 		parser.parse();
+		
+		input = "prog image img;";
+		show(input);
+		scanner = new Scanner(input).scan();
+		show(scanner);
+		parser = new SimpleParser(scanner);
+		parser.parse();
+		
+		input = "prog url img=src;";
+		show(input);
+		scanner = new Scanner(input).scan();
+		show(scanner);
+		parser = new SimpleParser(scanner);
+		parser.parse();
 	}
 	
 

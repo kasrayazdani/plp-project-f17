@@ -120,9 +120,7 @@ public class SimpleParser {
 			match(RSQUARE);
 		}
 		match(IDENTIFIER);
-		if (t.kind == SEMI)
-			consume();
-		else {
+		if (t.kind != SEMI) {
 			match(OP_LARROW);
 			resolve_source();
 		}
