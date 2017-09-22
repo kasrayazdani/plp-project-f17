@@ -78,7 +78,8 @@ public class SimpleParserTest {
 		parser = new SimpleParser(scanner);
 		parser.parse();
 		
-		input = "prog url img=src;";
+		input = "prog url ss1=src;\n" + 
+				"file ss2=\"src\";";
 		show(input);
 		scanner = new Scanner(input).scan();
 		show(scanner);
