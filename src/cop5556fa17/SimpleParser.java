@@ -105,9 +105,7 @@ public class SimpleParser {
 
 	void var_declaration() throws SyntaxException {
 		match(IDENTIFIER);
-		if (t.kind == SEMI)
-			consume();
-		else {
+		if (t.kind != SEMI) {
 			match(OP_ASSIGN);
 			expression();
 		}
@@ -231,6 +229,7 @@ public class SimpleParser {
 	 */
 	void expression() throws SyntaxException {
 		//TODO implement this.
+		
 		throw new UnsupportedOperationException();
 	}
 
