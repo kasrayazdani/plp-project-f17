@@ -46,9 +46,8 @@ public class SimpleParserTest {
 		SimpleParser parser = new SimpleParser(scanner);  //Create a parser
 		thrown.expect(SyntaxException.class);
 		try {
-		parser.parse();  //Parse the program
-		}
-		catch (SyntaxException e) {
+			parser.parse();  //Parse the program
+		} catch (SyntaxException e) {
 			show(e);
 			throw e;
 		}
