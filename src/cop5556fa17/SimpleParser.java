@@ -171,7 +171,7 @@ public class SimpleParser {
 	
 	void assign_statement() throws SyntaxException {
 		switch(t.kind) {
-		case LSQUARE:
+		case LSQUARE:				//Lhs
 			match(LSQUARE);
 			lhsSelector();
 			match(RSQUARE);
@@ -199,6 +199,7 @@ public class SimpleParser {
 			match(KW_r);
 			match(COMMA);
 			match(KW_A);
+			break;
 		default:
 			throw new UnsupportedOperationException();
 		}
@@ -231,6 +232,126 @@ public class SimpleParser {
 		throw new UnsupportedOperationException();
 	}
 
+	void or_expression() throws SyntaxException {
+		and_expression();
+		while (t.kind == OP_OR) {
+			consume();
+			and_expression();
+		}
+	}
+	
+	void and_expression() throws SyntaxException {
+		eq_expression();
+		while(t.kind == OP_AND) {
+			consume();
+			eq_expression();
+		}
+	}
+	
+	void eq_expression() throws SyntaxException {
+		rel_expression();
+		while(Arrays.asList(new Kind[]{OP_EQ,OP_NEQ}).contains(t.kind)) {
+			consume();
+			rel_expression();			
+		}
+	}
+	
+	void rel_expression() throws SyntaxException {
+		add_expression();
+		while(Arrays.asList(new Kind[]{OP_LT,OP_GT,OP_LE,OP_GE}).contains(t.kind)) {
+			consume();
+			add_expression();
+		}
+	}
+	
+	void add_expression() throws SyntaxException {
+		mult_expression();
+		while(Arrays.asList(new Kind[]{OP_PLUS,OP_MINUS}).contains(t.kind)) {
+			consume();
+			mult_expression();
+		}
+	}
+	
+	void mult_expression() throws SyntaxException {
+		unary_expression();
+		while(Arrays.asList(new Kind[]{OP_TIMES,OP_DIV,OP_MOD}).contains(t.kind)) {
+			consume();
+			unary_expression();
+		}
+	}
+	
+	void unary_expression() throws SyntaxException {
+		//TODO .. not LL(1) possibly
+	}
+	
+	void unary_expression_notplusminus() throws SyntaxException {
+		if (t.kind == OP_EXCL) {
+			consume();
+			unary_expression();
+		}
+		else if (t.kind == IDENTIFIER) {
+			identOrPixelSelector_expression();
+		}
+		else if (Arrays.asList(new Kind[]{KW_x,KW_y,KW_r,KW_a,
+										  KW_X,KW_Y,KW_Z,KW_A,KW_R,
+										  KW_DEF_X,KW_DEF_Y}).contains(t.kind)) {
+			consume();
+		}
+		else
+			primary();
+	}
+	
+	void identOrPixelSelector_expression() throws SyntaxException {
+		match(IDENTIFIER);
+		if (t.kind == LSQUARE) {
+			match(LSQUARE);
+			selector();
+			match(RSQUARE);
+		}
+	}
+	
+	void primary() throws SyntaxException {
+		if (t.kind == INTEGER_LITERAL)
+			consume();
+		else if (t.kind == LPAREN) {
+			match(LPAREN);
+			expression();
+			match(RPAREN);
+		}
+		else
+			function_application();
+	}
+	
+	void selector() throws SyntaxException {
+		expression();
+		match(COMMA);
+		expression();
+	}
+	
+	void function_application() throws SyntaxException {
+		if (Arrays.asList(new Kind[]{KW_sin,KW_cos,KW_atan,
+									 KW_abs,KW_cart_x,KW_cart_y,
+									 KW_polar_a,KW_polar_r}).contains(t.kind)) {
+			consume();
+			switch(t.kind) {
+			case LPAREN:
+				match(LPAREN);
+				expression();
+				match(RPAREN);
+				break;
+			case LSQUARE:
+				match(LSQUARE);
+				selector();
+				match(RSQUARE);
+				break;
+			default:
+				throw new UnsupportedOperationException();
+			}
+		}
+		else
+			throw new UnsupportedOperationException();
+	}
+	
 	/**
 	 * Only for check at end of program. Does not "consume" EOF so no attempt to get
 	 * nonexistent next Token.
