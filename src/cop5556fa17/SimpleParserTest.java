@@ -39,14 +39,14 @@ public class SimpleParserTest {
 	 */
 	@Test
 	public void testEmpty() throws LexicalException, SyntaxException {
-		String input = "";  //The input is the empty string.  This is not legal
-		show(input);        //Display the input 
-		Scanner scanner = new Scanner(input).scan();  //Create a Scanner and initialize it
-		show(scanner);   //Display the Scanner
-		SimpleParser parser = new SimpleParser(scanner);  //Create a parser
+		String input = "";  							//The input is the empty string.  This is not legal
+		show(input);        							//Display the input 
+		Scanner scanner = new Scanner(input).scan();	//Create a Scanner and initialize it
+		show(scanner);   								//Display the Scanner
+		SimpleParser parser = new SimpleParser(scanner);//Create a parser
 		thrown.expect(SyntaxException.class);
 		try {
-			parser.parse();  //Parse the program
+			parser.parse();  							//Parse the program
 		} catch (SyntaxException e) {
 			show(e);
 			throw e;
