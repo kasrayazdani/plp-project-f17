@@ -18,7 +18,7 @@ public class SimpleParserTest {
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
-	
+
 	//To make it easy to print objects and turn this output on and off
 	static final boolean doPrint = true;
 	private void show(Object input) {
@@ -53,7 +53,7 @@ public class SimpleParserTest {
 		}
 	}
 
-	
+
 	/** Another example.  This is a legal program and should pass when 
 	 * your parser is implemented.
 	 * 
@@ -69,14 +69,14 @@ public class SimpleParserTest {
 		show(scanner);   //Display the Scanner
 		SimpleParser parser = new SimpleParser(scanner);  //
 		parser.parse();
-		
+
 		input = "prog image img;";
 		show(input);
 		scanner = new Scanner(input).scan();
 		show(scanner);
 		parser = new SimpleParser(scanner);
 		parser.parse();
-		
+
 		input = "prog url ss1=src;\n" + 
 				"file ss2=\"src\";";
 		show(input);
@@ -85,7 +85,7 @@ public class SimpleParserTest {
 		parser = new SimpleParser(scanner);
 		parser.parse();
 	}
-	
+
 
 	/**
 	 * This example invokes the method for expression directly. 
@@ -109,8 +109,5 @@ public class SimpleParserTest {
 		SimpleParser parser = new SimpleParser(scanner);  
 		parser.expression();  //Call expression directly.  
 	}
-
-
-	
-	}
+}
 
