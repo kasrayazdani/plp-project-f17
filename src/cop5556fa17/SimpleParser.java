@@ -162,7 +162,7 @@ public class SimpleParser {
 			break;
 		case OP_LARROW:				//ImageInStatement
 			consume();
-			resolve_sink();
+			resolve_source();
 			break;
 		default:
 			throw new UnsupportedOperationException();
@@ -228,8 +228,14 @@ public class SimpleParser {
 	 */
 	void expression() throws SyntaxException {
 		//TODO implement this.
-		
-		throw new UnsupportedOperationException();
+		or_expression();
+		if (t.kind != SEMI) {
+			match(OP_Q);
+			expression();
+			match(OP_COLON);
+			expression();
+		}
+		//throw new UnsupportedOperationException();
 	}
 
 	void or_expression() throws SyntaxException {
@@ -282,6 +288,12 @@ public class SimpleParser {
 	
 	void unary_expression() throws SyntaxException {
 		//TODO .. not LL(1) possibly
+		if (t.kind==OP_PLUS || t.kind==OP_MINUS) {
+			consume();
+			unary_expression();
+		}
+		else
+			unary_expression_notplusminus();
 	}
 	
 	void unary_expression_notplusminus() throws SyntaxException {
@@ -318,6 +330,8 @@ public class SimpleParser {
 			expression();
 			match(RPAREN);
 		}
+		else if (t.kind == BOOLEAN_LITERAL)
+			consume();
 		else
 			function_application();
 	}
