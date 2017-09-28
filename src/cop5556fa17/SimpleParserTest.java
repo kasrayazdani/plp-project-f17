@@ -86,6 +86,15 @@ public class SimpleParserTest {
 		parser.parse();
 	}
 
+	@Test
+	public void testDec2() throws LexicalException, SyntaxException {
+		String input = "prog int k = 1/2 + 2**3 - 3+4;";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();  //Create a Scanner and initialize it
+		show(scanner);   //Display the Scanner
+		SimpleParser parser = new SimpleParser(scanner);  //
+		parser.parse();
+	}
 
 	/**
 	 * This example invokes the method for expression directly. 
@@ -103,6 +112,46 @@ public class SimpleParserTest {
 	@Test
 	public void expression1() throws SyntaxException, LexicalException {
 		String input = "2";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();  
+		show(scanner);   
+		SimpleParser parser = new SimpleParser(scanner);  
+		parser.expression();  //Call expression directly.  
+	}
+	
+	@Test
+	public void expression2() throws SyntaxException, LexicalException {
+		String input = "2+++3";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();  
+		show(scanner);   
+		SimpleParser parser = new SimpleParser(scanner);  
+		parser.expression();  //Call expression directly.  
+	}
+	
+	@Test
+	public void expression3() throws SyntaxException, LexicalException {
+		String input = "2 > 3 ? 4 : 1";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();  
+		show(scanner);   
+		SimpleParser parser = new SimpleParser(scanner);  
+		parser.expression();  //Call expression directly.  
+	}
+	
+	@Test
+	public void expression4() throws SyntaxException, LexicalException {
+		String input = "++++++++++x";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();  
+		show(scanner);   
+		SimpleParser parser = new SimpleParser(scanner);  
+		parser.expression();  //Call expression directly.  
+	}
+	
+	@Test
+	public void expression5() throws SyntaxException, LexicalException {
+		String input = "2**3";
 		show(input);
 		Scanner scanner = new Scanner(input).scan();  
 		show(scanner);   

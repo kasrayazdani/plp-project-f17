@@ -61,6 +61,8 @@ public class SimpleParser {
 	
 	void program() throws SyntaxException {
 		//TODO  implement this
+		if (t.kind == EOF)
+			throw new SyntaxException(t, "File is empty!\n");
 		if (t.kind == IDENTIFIER){
 			consume();
 			while (t.kind != EOF){
@@ -229,7 +231,7 @@ public class SimpleParser {
 	void expression() throws SyntaxException {
 		//TODO implement this.
 		or_expression();
-		if (t.kind != SEMI) {
+		if (t.kind==OP_Q) {
 			match(OP_Q);
 			expression();
 			match(OP_COLON);
