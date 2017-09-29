@@ -226,6 +226,14 @@ public class SimpleParserTest {
 		parser = new SimpleParser(scanner);  
 		parser.expression();  //Call expression directly.
 		
+		input = "( sin( cos[ atan(abs(cord_x==45 ? 45 : 90)) , "
+				+ "atan(abs(cord_y==90 ? 90 : 45)) ] ) )";
+		show(input);
+		scanner = new Scanner(input).scan();  
+		show(scanner);   
+		parser = new SimpleParser(scanner);  
+		parser.expression();  //Call expression directly.
+		
 		input = "( (tyrion==dead) ? false : what_the_heck? )";
 		show(input);
 		scanner = new Scanner(input).scan();				//Create a Scanner and initialize it
@@ -234,6 +242,183 @@ public class SimpleParserTest {
 		thrown.expect(SyntaxException.class);
 		try {
 			parser.expression();  							//Parse the program
+		} catch (SyntaxException e) {
+			show(e);
+			throw e;
+		}
+	}
+	
+	@Test
+	public void expression7_primary2() throws SyntaxException, LexicalException {
+		String input = "( sin( cos[ atan(abs(cord_x==45 ? 45 : 90)) , "
+				+ "polar_a[ atan(abs(cord_y==90 ? 90 : 45)), ] ] ) )";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();				//Create a Scanner and initialize it
+		show(scanner);
+		SimpleParser parser = new SimpleParser(scanner);			//Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			parser.expression();  									//Parse the program
+		} catch (SyntaxException e) {
+			show(e);
+			throw e;
+		}
+	}
+	
+	@Test 
+	public void expression8_or() throws SyntaxException, LexicalException {
+		String input = "(junk1 & junk2) | (junk2==junk3) | (junk3!=junk4) | "
+				+ "((junk4 & junk5) | (junk5 == junk6) | (junk6!=junk7))";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();  
+		show(scanner);   
+		SimpleParser parser = new SimpleParser(scanner);  
+		parser.expression();  //Call expression directly.
+		
+		input = "45+55 > 45-55 ? false : 45+55<45-55";
+		show(input);
+		scanner = new Scanner(input).scan();  
+		show(scanner);   
+		parser = new SimpleParser(scanner);  
+		parser.expression();  //Call expression directly.
+		
+		input = "45*55 > 45/55 ? true : 45/55<45*55 & 45%55";
+		show(input);
+		scanner = new Scanner(input).scan();  
+		show(scanner);   
+		parser = new SimpleParser(scanner);  
+		parser.expression();  //Call expression directly.
+		
+		input = "x+y | X++Y | r+-a | A*R/Z+DEF_X-DEF_Y";
+		show(input);
+		scanner = new Scanner(input).scan();  
+		show(scanner);   
+		parser = new SimpleParser(scanner);  
+		parser.expression();  //Call expression directly.
+		
+		input = "junk | junk2[ junk3[sin(45),cos(45)] , "
+				+ "junk4[ cos(X)>sin(X) ? cos(X) : sin(X) , A==R ? x+y : A+R ] ]";
+		show(input);
+		scanner = new Scanner(input).scan();  
+		show(scanner);   
+		parser = new SimpleParser(scanner);  
+		parser.expression();  //Call expression directly.
+		
+		input = "!x | !y & !Z ? (atan(DEF_X/DEF_Y)) : polar_a[sin(DEF_X),cos(DEF_Y)]";
+		show(input);
+		scanner = new Scanner(input).scan();  
+		show(scanner);   
+		parser = new SimpleParser(scanner);  
+		parser.expression();  //Call expression directly.
+		
+	}
+	
+	@Test
+	public void expression9_or2() throws SyntaxException, LexicalException {
+		String input = "junk1 || junk2";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();				//Create a Scanner and initialize it
+		show(scanner);
+		SimpleParser parser = new SimpleParser(scanner);			//Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			parser.expression();  									//Parse the program
+		} catch (SyntaxException e) {
+			show(e);
+			throw e;
+		}
+	}
+	
+	@Test
+	public void expression10_and() throws SyntaxException, LexicalException {
+		String input = "junk0 | junk1 && junk2";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();				//Create a Scanner and initialize it
+		show(scanner);
+		SimpleParser parser = new SimpleParser(scanner);			//Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			parser.expression();  									//Parse the program
+		} catch (SyntaxException e) {
+			show(e);
+			throw e;
+		}
+	}
+	
+	@Test
+	public void expression11_eq() throws SyntaxException, LexicalException {
+		String input = "junk0 | junk1 & junk2===junk3";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();				//Create a Scanner and initialize it
+		show(scanner);
+		SimpleParser parser = new SimpleParser(scanner);			//Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			parser.expression();  									//Parse the program
+		} catch (SyntaxException e) {
+			show(e);
+			throw e;
+		}
+	}
+	
+	@Test
+	public void expression12_eq2() throws SyntaxException, LexicalException {
+		String input = "junk0 | junk1 & junk2!==junk3 ";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();				//Create a Scanner and initialize it
+		show(scanner);
+		SimpleParser parser = new SimpleParser(scanner);			//Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			parser.expression();  									//Parse the program
+		} catch (SyntaxException e) {
+			show(e);
+			throw e;
+		}
+	}
+	
+	@Test
+	public void expression13_eq3() throws SyntaxException, LexicalException {
+		String input = "junk0 | junk1 & junk2!=!=junk3 ";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();				//Create a Scanner and initialize it
+		show(scanner);
+		SimpleParser parser = new SimpleParser(scanner);			//Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			parser.expression();  									//Parse the program
+		} catch (SyntaxException e) {
+			show(e);
+			throw e;
+		}
+	}
+	
+	@Test
+	public void expression14_eq4() throws SyntaxException, LexicalException {
+		String input = "junk0 | junk1 & junk2====junk3 ";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();				//Create a Scanner and initialize it
+		show(scanner);
+		SimpleParser parser = new SimpleParser(scanner);			//Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			parser.expression();  									//Parse the program
+		} catch (SyntaxException e) {
+			show(e);
+			throw e;
+		}
+	}
+	
+	@Test
+	public void expression15_eq5() throws SyntaxException, LexicalException {
+		String input = "junk0 | junk1 & junk2!===junk3 ";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();				//Create a Scanner and initialize it
+		show(scanner);
+		SimpleParser parser = new SimpleParser(scanner);			//Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			parser.expression();  									//Parse the program
 		} catch (SyntaxException e) {
 			show(e);
 			throw e;
