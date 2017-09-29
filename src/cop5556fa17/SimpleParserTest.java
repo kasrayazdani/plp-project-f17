@@ -87,15 +87,36 @@ public class SimpleParserTest {
 	}
 
 	@Test
-	public void testDec2() throws LexicalException, SyntaxException {
-		String input = "prog int k = 1/2 + 2**3 - 3+4;";
+	public void testDec2_var() throws LexicalException, SyntaxException {
+		String input = "prog int k = 1/2 + 2*3 - 3+4;";
 		show(input);
-		Scanner scanner = new Scanner(input).scan();  //Create a Scanner and initialize it
+		Scanner scanner = new Scanner(input).scan();  	//Create a Scanner and initialize it
 		show(scanner);   //Display the Scanner
-		SimpleParser parser = new SimpleParser(scanner);  //
+		SimpleParser parser = new SimpleParser(scanner);
 		parser.parse();
+		
+		input = "prog boolean sh_it = john==dead ? false : real;";
+		show(input);
+		scanner = new Scanner(input).scan();  			//Create a Scanner and initialize it
+		show(scanner);   								//Display the Scanner
+		parser = new SimpleParser(scanner);
+		parser.parse();
+		
+		input = "prog boolean faith = cersei==dead ? true : lost;\n" + 
+				"int kill_list = ask(sansa);";
+		show(input);        							//Display the input 
+		scanner = new Scanner(input).scan();			//Create a Scanner and initialize it
+		show(scanner);   								//Display the Scanner
+		parser = new SimpleParser(scanner);				//Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			parser.parse();  							//Parse the program
+		} catch (SyntaxException e) {
+			show(e);
+			throw e;
+		}
 	}
-
+	
 	/**
 	 * This example invokes the method for expression directly. 
 	 * Effectively, we are viewing Expression as the start

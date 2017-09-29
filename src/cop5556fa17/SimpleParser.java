@@ -74,6 +74,10 @@ public class SimpleParser {
 					statement();
 					match(SEMI);
 				}
+				else {
+					String message = t.kind + " at " + t.line + ":" + t.pos_in_line;
+					throw new SyntaxException(t, message);
+				}
 			}
 		}
 		else {
