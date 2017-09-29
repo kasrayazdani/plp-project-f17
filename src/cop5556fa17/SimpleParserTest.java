@@ -158,5 +158,65 @@ public class SimpleParserTest {
 		SimpleParser parser = new SimpleParser(scanner);  
 		parser.expression();  //Call expression directly.  
 	}
+	
+	@Test
+	public void expression6_funcApp() throws SyntaxException, LexicalException {
+		String input = "polar_a (45)";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();  
+		show(scanner);   
+		SimpleParser parser = new SimpleParser(scanner);  
+		parser.expression();  //Call expression directly.
+		
+		input = "polar_r [cart_x(90),cart_y(90)]";
+		show(input);
+		scanner = new Scanner(input).scan();  
+		show(scanner);   
+		parser = new SimpleParser(scanner);  
+		parser.expression();  //Call expression directly.
+		
+		input = "sin(cart_x(90),cart_y(90))";
+		show(input);
+		scanner = new Scanner(input).scan();			//Create a Scanner and initialize it
+		show(scanner);
+		parser = new SimpleParser(scanner);//Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			parser.expression();  							//Parse the program
+		} catch (SyntaxException e) {
+			show(e);
+			throw e;
+		}
+	}
+	
+	@Test
+	public void expression7_primary() throws SyntaxException, LexicalException {
+		String input = "true";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();  
+		show(scanner);   
+		SimpleParser parser = new SimpleParser(scanner);  
+		parser.expression();  //Call expression directly.
+		
+		input = "( (ned==alive) ? (true) : (false) )";
+		show(input);
+		scanner = new Scanner(input).scan();  
+		show(scanner);   
+		parser = new SimpleParser(scanner);  
+		parser.expression();  //Call expression directly.
+		
+		input = "( (tyrion==dead) ? false : what_the_heck? )";
+		show(input);
+		scanner = new Scanner(input).scan();				//Create a Scanner and initialize it
+		show(scanner);
+		parser = new SimpleParser(scanner);					//Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			parser.expression();  							//Parse the program
+		} catch (SyntaxException e) {
+			show(e);
+			throw e;
+		}
+	}
 }
 

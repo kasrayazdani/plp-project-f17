@@ -76,8 +76,10 @@ public class SimpleParser {
 				}
 			}
 		}
-		else
-			throw new UnsupportedOperationException();
+		else {
+			String message = t.kind + " at " + t.line + ":" + t.pos_in_line;
+			throw new SyntaxException(t, message);
+		}
 	}
 
 	void declaration() throws SyntaxException {
@@ -101,7 +103,8 @@ public class SimpleParser {
 			break;
 			
 		default:
-			throw new UnsupportedOperationException();
+			String message = t.kind + " at " + t.line + ":" + t.pos_in_line;
+			throw new SyntaxException(t, message);
 		}
 	}
 
@@ -147,7 +150,8 @@ public class SimpleParser {
 			consume();
 			break;
 		default:
-			throw new UnsupportedOperationException();
+			String message = t.kind + " at " + t.line + ":" + t.pos_in_line;
+			throw new SyntaxException(t, message);
 		}
 	}
 	
@@ -167,7 +171,8 @@ public class SimpleParser {
 			resolve_source();
 			break;
 		default:
-			throw new UnsupportedOperationException();
+			String message = t.kind + " at " + t.line + ":" + t.pos_in_line;
+			throw new SyntaxException(t, message);
 		}
 	}
 	
@@ -185,7 +190,8 @@ public class SimpleParser {
 			expression();
 			break;
 		default:
-			throw new UnsupportedOperationException();
+			String message = t.kind + " at " + t.line + ":" + t.pos_in_line;
+			throw new SyntaxException(t, message);
 		}
 	}
 	
@@ -203,12 +209,13 @@ public class SimpleParser {
 			match(KW_A);
 			break;
 		default:
-			throw new UnsupportedOperationException();
+			String message = t.kind + " at " + t.line + ":" + t.pos_in_line;
+			throw new SyntaxException(t, message);
 		}
 		match(RSQUARE);
 	}
 	
-	void resolve_sink() {
+	void resolve_sink() throws SyntaxException {
 		switch(t.kind) {
 		case IDENTIFIER:
 			consume();
@@ -217,7 +224,8 @@ public class SimpleParser {
 			consume();
 			break;
 		default:
-			throw new UnsupportedOperationException();
+			String message = t.kind + " at " + t.line + ":" + t.pos_in_line;
+			throw new SyntaxException(t, message);
 		}
 	}
 	
@@ -361,11 +369,14 @@ public class SimpleParser {
 				match(RSQUARE);
 				break;
 			default:
-				throw new UnsupportedOperationException();
+				String message = t.kind + " at " + t.line + ":" + t.pos_in_line;
+				throw new SyntaxException(t, message);
 			}
 		}
-		else
-			throw new UnsupportedOperationException();
+		else {
+			String message = t.kind + " at " + t.line + ":" + t.pos_in_line;
+			throw new SyntaxException(t, message);
+		}
 	}
 	
 	/**
@@ -388,6 +399,7 @@ public class SimpleParser {
 			consume();
 			return t;
 		}
-		throw new UnsupportedOperationException();
+		String message = "Expected " + kind + " at " + t.line + ":" + t.pos_in_line;
+		throw new SyntaxException(t, message);
 	}
 }
