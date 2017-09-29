@@ -180,6 +180,22 @@ public class SimpleParserTest {
 	}
 	
 	@Test
+	public void testDec7_image5() throws LexicalException, SyntaxException {
+		String input = "prog image [img_source,\"/path/to/file\"] img2 <- x+y;\n";
+		show(input);        							//Display the input 
+		Scanner scanner = new Scanner(input).scan();			//Create a Scanner and initialize it
+		show(scanner);   								//Display the Scanner
+		SimpleParser parser = new SimpleParser(scanner);				//Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			parser.parse();  							//Parse the program
+		} catch (SyntaxException e) {
+			show(e);
+			throw e;
+		}
+	}
+	
+	@Test
 	public void testDec7_ss() throws LexicalException, SyntaxException {
 		String input = "prog url facebook = \"www.facebook.com\";\n"
 					 + "file assignment = \"/home/vishal/plp.txt\";\n"
@@ -272,6 +288,80 @@ public class SimpleParserTest {
 			throw e;
 		}
 	}
+	
+	@Test
+	public void testStmnt4_assign() throws SyntaxException, LexicalException {
+		String input = "prog lhs = 4+5;\n"
+					 + "lhs [[x,y]] = matrix[xx,yy];\n"
+					 + "lhs [[r,A]] = matrix[xxx,yyy];\n"
+					 + "lhs [[x,y]] = ( (ned==alive) ? (true) : (false) );\n";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();  			//Create a Scanner and initialize it
+		show(scanner); 			  								//Display the Scanner
+		SimpleParser parser = new SimpleParser(scanner);
+		parser.parse();
+		
+		input = "prog lhs [x,y] = matrix[xx,yy];";
+		show(input);        							//Display the input 
+		scanner = new Scanner(input).scan();			//Create a Scanner and initialize it
+		show(scanner);   								//Display the Scanner
+		parser = new SimpleParser(scanner);				//Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			parser.parse();  							//Parse the program
+		} catch (SyntaxException e) {
+			show(e);
+			throw e;
+		}
+	}
+	
+	@Test
+	public void testStmnt5_assign2() throws SyntaxException, LexicalException {
+		String input = "prog lhs [[x,A]] = matrix[xx,yy];";
+		show(input);        							//Display the input 
+		Scanner scanner = new Scanner(input).scan();			//Create a Scanner and initialize it
+		show(scanner);   								//Display the Scanner
+		SimpleParser parser = new SimpleParser(scanner);				//Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			parser.parse();  							//Parse the program
+		} catch (SyntaxException e) {
+			show(e);
+			throw e;
+		}
+	}
+	
+	@Test
+	public void testStmnt6_assign3() throws SyntaxException, LexicalException {
+		String input = "prog lhs [[r,Y]] = matrix[xx,yy];";
+		show(input);        							//Display the input 
+		Scanner scanner = new Scanner(input).scan();			//Create a Scanner and initialize it
+		show(scanner);   								//Display the Scanner
+		SimpleParser parser = new SimpleParser(scanner);				//Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			parser.parse();  							//Parse the program
+		} catch (SyntaxException e) {
+			show(e);
+			throw e;
+		}
+	}
+	
+	@Test
+	public void testStmnt7_assign4() throws SyntaxException, LexicalException {
+		String input = "prog lhs [[r,A]] <- matrix[xx,yy];";
+		show(input);        							//Display the input 
+		Scanner scanner = new Scanner(input).scan();			//Create a Scanner and initialize it
+		show(scanner);   								//Display the Scanner
+		SimpleParser parser = new SimpleParser(scanner);				//Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			parser.parse();  							//Parse the program
+		} catch (SyntaxException e) {
+			show(e);
+			throw e;
+		}
+	}	
 	
 	/**
 	 * This example invokes the method for expression directly. 

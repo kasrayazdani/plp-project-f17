@@ -75,13 +75,13 @@ public class SimpleParser {
 					match(SEMI);
 				}
 				else {
-					String message = t.kind + " at " + t.line + ":" + t.pos_in_line;
+					String message = t.kind + " at " + t.line + ":" + t.pos_in_line + "\n";
 					throw new SyntaxException(t, message);
 				}
 			}
 		}
 		else {
-			String message = t.kind + " at " + t.line + ":" + t.pos_in_line;
+			String message = t.kind + " at " + t.line + ":" + t.pos_in_line + "\n";
 			throw new SyntaxException(t, message);
 		}
 	}
@@ -107,7 +107,7 @@ public class SimpleParser {
 			break;
 			
 		default:
-			String message = t.kind + " at " + t.line + ":" + t.pos_in_line;
+			String message = t.kind + " at " + t.line + ":" + t.pos_in_line + "\n";
 			throw new SyntaxException(t, message);
 		}
 	}
@@ -154,7 +154,7 @@ public class SimpleParser {
 			consume();
 			break;
 		default:
-			String message = t.kind + " at " + t.line + ":" + t.pos_in_line;
+			String message = t.kind + " at " + t.line + ":" + t.pos_in_line + "\n";
 			throw new SyntaxException(t, message);
 		}
 	}
@@ -175,7 +175,7 @@ public class SimpleParser {
 			resolve_source();
 			break;
 		default:
-			String message = t.kind + " at " + t.line + ":" + t.pos_in_line;
+			String message = t.kind + " at " + t.line + ":" + t.pos_in_line + "\n";
 			throw new SyntaxException(t, message);
 		}
 	}
@@ -194,7 +194,7 @@ public class SimpleParser {
 			expression();
 			break;
 		default:
-			String message = t.kind + " at " + t.line + ":" + t.pos_in_line;
+			String message = t.kind + " at " + t.line + ":" + t.pos_in_line + "\n";
 			throw new SyntaxException(t, message);
 		}
 	}
@@ -213,7 +213,7 @@ public class SimpleParser {
 			match(KW_A);
 			break;
 		default:
-			String message = t.kind + " at " + t.line + ":" + t.pos_in_line;
+			String message = t.kind + " at " + t.line + ":" + t.pos_in_line + "\n";
 			throw new SyntaxException(t, message);
 		}
 		match(RSQUARE);
@@ -228,7 +228,7 @@ public class SimpleParser {
 			consume();
 			break;
 		default:
-			String message = t.kind + " at " + t.line + ":" + t.pos_in_line;
+			String message = t.kind + " at " + t.line + ":" + t.pos_in_line + "\n";
 			throw new SyntaxException(t, message);
 		}
 	}
@@ -373,12 +373,12 @@ public class SimpleParser {
 				match(RSQUARE);
 				break;
 			default:
-				String message = t.kind + " at " + t.line + ":" + t.pos_in_line;
+				String message = t.kind + " at " + t.line + ":" + t.pos_in_line + "\n";
 				throw new SyntaxException(t, message);
 			}
 		}
 		else {
-			String message = t.kind + " at " + t.line + ":" + t.pos_in_line;
+			String message = t.kind + " at " + t.line + ":" + t.pos_in_line + "\n";
 			throw new SyntaxException(t, message);
 		}
 	}
@@ -394,7 +394,7 @@ public class SimpleParser {
 		if (t.kind == EOF) {
 			return t;
 		}
-		String message =  "Expected EOL at " + t.line + ":" + t.pos_in_line;
+		String message =  "Expected EOL at " + t.line + ":" + t.pos_in_line + "\n";
 		throw new SyntaxException(t, message);
 	}
 	
@@ -403,7 +403,7 @@ public class SimpleParser {
 			consume();
 			return t;
 		}
-		String message = "Expected " + kind + " at " + t.line + ":" + t.pos_in_line;
+		String message = "Expected " + kind + " at " + t.line + ":" + t.pos_in_line + "\n";
 		throw new SyntaxException(t, message);
 	}
 }
