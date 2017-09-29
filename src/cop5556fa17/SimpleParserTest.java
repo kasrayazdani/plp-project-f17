@@ -117,6 +117,68 @@ public class SimpleParserTest {
 		}
 	}
 	
+	@Test
+	public void testDec3_image() throws LexicalException, SyntaxException {
+		String input = "prog image [ x+y | X++Y | r+-a | A*R/Z+DEF_X-DEF_Y , ( (ned==alive) ? (true) : (false) ) ] img;\n"
+				+ "image [ A*R/Z+DEF_X-DEF_Y , (ned==alive) ] img2 <- \"img2\";\n"
+				+ "image [ A*R/Z/DEF_X-DEF_Y , (ned!=alive) ] img3 <- img2;\n"
+				+ "image [ A*R/Z+DEF_X-DEF_Y , (ned==alive) ] img4 <- @ x+y | X++Y | r+-a;\n"
+				+ "image img5 <- img2;";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();  			//Create a Scanner and initialize it
+		show(scanner);   								//Display the Scanner
+		SimpleParser parser = new SimpleParser(scanner);
+		parser.parse();
+	}
+	
+	@Test
+	public void testDec4_image2() throws LexicalException, SyntaxException {
+		String input = "prog image [ A*R/Z+DEF_X-DEF_Y , (ned==alive) ] img2 = \"img2\";\n";
+		show(input);        							//Display the input 
+		Scanner scanner = new Scanner(input).scan();			//Create a Scanner and initialize it
+		show(scanner);   								//Display the Scanner
+		SimpleParser parser = new SimpleParser(scanner);				//Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			parser.parse();  							//Parse the program
+		} catch (SyntaxException e) {
+			show(e);
+			throw e;
+		}
+	}
+	
+	@Test
+	public void testDec5_image3() throws LexicalException, SyntaxException {
+		String input = "prog image [ A*R/Z+DEF_X-DEF_Y , (ned==alive) ] img2 <- x;\n";
+		show(input);        							//Display the input 
+		Scanner scanner = new Scanner(input).scan();			//Create a Scanner and initialize it
+		show(scanner);   								//Display the Scanner
+		SimpleParser parser = new SimpleParser(scanner);				//Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			parser.parse();  							//Parse the program
+		} catch (SyntaxException e) {
+			show(e);
+			throw e;
+		}
+	}
+	
+	@Test
+	public void testDec6_image4() throws LexicalException, SyntaxException {
+		String input = "prog image [ A*R/Z+DEF_X-DEF_Y , (ned==alive) ] img2 <- x+y;\n";
+		show(input);        							//Display the input 
+		Scanner scanner = new Scanner(input).scan();			//Create a Scanner and initialize it
+		show(scanner);   								//Display the Scanner
+		SimpleParser parser = new SimpleParser(scanner);				//Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			parser.parse();  							//Parse the program
+		} catch (SyntaxException e) {
+			show(e);
+			throw e;
+		}
+	}
+	
 	/**
 	 * This example invokes the method for expression directly. 
 	 * Effectively, we are viewing Expression as the start
