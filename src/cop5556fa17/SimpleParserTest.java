@@ -211,6 +211,68 @@ public class SimpleParserTest {
 		}
 	}
 	
+	@Test
+	public void testStmnt_imgOut() throws SyntaxException, LexicalException {
+		String input = "prog output -> img2show;\n"
+					 + "output -> screen;\n"
+					 + "output -> image;";
+		show(input);        							//Display the input 
+		Scanner scanner = new Scanner(input).scan();			//Create a Scanner and initialize it
+		show(scanner);   								//Display the Scanner
+		SimpleParser parser = new SimpleParser(scanner);				//Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			parser.parse();  							//Parse the program
+		} catch (SyntaxException e) {
+			show(e);
+			throw e;
+		}
+	}
+	
+	@Test
+	public void testStmnt2_imgIn() throws SyntaxException, LexicalException {
+		String input = "prog input <- in_img;\n"
+					 + "input <- \"/path/of/input/image\";\n"
+					 + "input <- @image_url;";
+		show(input);        									//Display the input 
+		Scanner scanner = new Scanner(input).scan();			//Create a Scanner and initialize it
+		show(scanner);   										//Display the Scanner
+		SimpleParser parser = new SimpleParser(scanner);		//Create a parser
+		parser.parse();											//Parse the program
+		
+		input = "prog input <- @path+2+img;\n"
+			  + "input <- path+2+img";
+		show(input);        							//Display the input 
+		scanner = new Scanner(input).scan();			//Create a Scanner and initialize it
+		show(scanner);   								//Display the Scanner
+		parser = new SimpleParser(scanner);				//Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			parser.parse();  							//Parse the program
+		} catch (SyntaxException e) {
+			show(e);
+			throw e;
+		}
+	}
+	
+	@Test
+	public void testStmnt3_imgIn2() throws SyntaxException, LexicalException {
+		String input = "prog input <- in_img;\n"
+				 + "input <- \"/path/of/input/image\";\n"
+				 + "input <- @image;";
+		show(input);        							//Display the input 
+		Scanner scanner = new Scanner(input).scan();			//Create a Scanner and initialize it
+		show(scanner);   								//Display the Scanner
+		SimpleParser parser = new SimpleParser(scanner);				//Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			parser.parse();  							//Parse the program
+		} catch (SyntaxException e) {
+			show(e);
+			throw e;
+		}
+	}
+	
 	/**
 	 * This example invokes the method for expression directly. 
 	 * Effectively, we are viewing Expression as the start
