@@ -361,7 +361,23 @@ public class SimpleParserTest {
 			show(e);
 			throw e;
 		}
-	}	
+	}
+	
+	@Test
+	public void testStmnt8_assign5() throws SyntaxException, LexicalException {
+		String input = "prog lhs = x | @";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();				//Create a Scanner and initialize it
+		show(scanner);
+		SimpleParser parser = new SimpleParser(scanner);			//Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			parser.parse();  									//Parse the program
+		} catch (SyntaxException e) {
+			show(e);
+			throw e;
+		}
+	}
 	
 	/**
 	 * This example invokes the method for expression directly. 
@@ -560,15 +576,15 @@ public class SimpleParserTest {
 	}
 	
 	@Test
-	public void expression9_or2() throws SyntaxException, LexicalException {
+	public void expression9_or2() throws SyntaxException, LexicalException {		
 		String input = "junk1 || junk2";
 		show(input);
 		Scanner scanner = new Scanner(input).scan();				//Create a Scanner and initialize it
 		show(scanner);
-		SimpleParser parser = new SimpleParser(scanner);			//Create a parser
+		SimpleParser parser = new SimpleParser(scanner);					//Create a parser
 		thrown.expect(SyntaxException.class);
 		try {
-			parser.expression();  									//Parse the program
+			parser.expression();  							//Parse the program
 		} catch (SyntaxException e) {
 			show(e);
 			throw e;
@@ -658,6 +674,22 @@ public class SimpleParserTest {
 	@Test
 	public void expression15_eq5() throws SyntaxException, LexicalException {
 		String input = "junk0 | junk1 & junk2!===junk3 ";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();				//Create a Scanner and initialize it
+		show(scanner);
+		SimpleParser parser = new SimpleParser(scanner);			//Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			parser.expression();  									//Parse the program
+		} catch (SyntaxException e) {
+			show(e);
+			throw e;
+		}
+	}
+	
+	@Test
+	public void expression16_or3() throws SyntaxException, LexicalException {
+		String input = "x | @";
 		show(input);
 		Scanner scanner = new Scanner(input).scan();				//Create a Scanner and initialize it
 		show(scanner);
