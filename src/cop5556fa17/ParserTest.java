@@ -9,7 +9,7 @@ import org.junit.rules.ExpectedException;
 import cop5556fa17.Scanner.LexicalException;
 import cop5556fa17.AST.*;
 
-import cop5556fa17.Parser.SyntaxException;
+import cop5556fa17.SimpleParser.SyntaxException;
 
 import static cop5556fa17.Scanner.Kind.*;
 
@@ -41,7 +41,7 @@ public class ParserTest {
 		Scanner scanner = new Scanner(input).scan(); // Create a Scanner and
 														// initialize it
 		show(scanner); // Display the tokens
-		Parser parser = new Parser(scanner); //Create a parser
+		SimpleParser parser = new SimpleParser(scanner); //Create a parser
 		thrown.expect(SyntaxException.class);
 		try {
 			ASTNode ast = parser.parse();; //Parse the program, which should throw an exception
@@ -58,7 +58,7 @@ public class ParserTest {
 		show(input);            //display input
 		Scanner scanner = new Scanner(input).scan();   //Create scanner and create token list
 		show(scanner);    //display the tokens
-		Parser parser = new Parser(scanner);   //create parser
+		SimpleParser parser = new SimpleParser(scanner);   //create parser
 		Program ast = parser.parse();          //parse program and get AST
 		show(ast);                             //Display the AST
 		assertEquals(ast.name, "prog");        //Check the name field in the Program object
@@ -71,7 +71,7 @@ public class ParserTest {
 		show(input);
 		Scanner scanner = new Scanner(input).scan(); 
 		show(scanner); 
-		Parser parser = new Parser(scanner);
+		SimpleParser parser = new SimpleParser(scanner);
 		Program ast = parser.parse();
 		show(ast);
 		assertEquals(ast.name, "prog"); 
