@@ -2,6 +2,7 @@ package cop5556fa17;
 
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import cop5556fa17.Scanner.Token;
 import cop5556fa17.SimpleParser.SyntaxException;
 
 import static cop5556fa17.Scanner.Kind.*;
+import cop5556fa17.AST.*;
 
 public class Parser {
 
@@ -43,9 +45,10 @@ public class Parser {
 	 * 
 	 * @throws SyntaxException
 	 */
-	public void parse() throws SyntaxException {
-		program();
+	public Program parse() throws SyntaxException {
+		Program ast = program();
 		matchEOF();
+		return ast;
 	}
 	
 	/**
@@ -59,31 +62,30 @@ public class Parser {
 	final List<Kind> dec_start = Arrays.asList(new Kind[]{KW_int, KW_boolean, KW_image, KW_url, KW_file});
 	final List<Kind> stmnt_start =Arrays.asList(new Kind[]{IDENTIFIER});
 	
-	void program() throws SyntaxException {
+	Program program() throws SyntaxException {
 		//TODO  implement this
-		if (t.kind == EOF)
-			throw new SyntaxException(t, "File is empty!\n");
-		if (t.kind == IDENTIFIER){
-			consume();
-			while (t.kind != EOF){
-				if (dec_start.contains(t.kind)) {
-					declaration();
-					match(SEMI);
-				}
-				else if (stmnt_start.contains(t.kind)) {
-					statement();
-					match(SEMI);
-				}
-				else {
-					String message = t.kind + " at " + t.line + ":" + t.pos_in_line + "\n";
-					throw new SyntaxException(t, message);
-				}
+		Token ft = t;
+		match(IDENTIFIER);
+		Program pg = null;
+		ArrayList<ASTNode> decsAndStatements = new ArrayList<ASTNode>();
+		while (t.kind != EOF){
+			if (dec_start.contains(t.kind)) {
+				//decsAndStatements.add();
+				declaration();
+				match(SEMI);
+			}
+			else if (stmnt_start.contains(t.kind)) {
+				//decsAndStatements.add();
+				statement();
+				match(SEMI);
+			}
+			else {
+				String message = t.kind + " at " + t.line + ":" + t.pos_in_line + "\n";
+				throw new SyntaxException(t, message);
 			}
 		}
-		else {
-			String message = t.kind + " at " + t.line + ":" + t.pos_in_line + "\n";
-			throw new SyntaxException(t, message);
-		}
+		pg = new Program(ft, ft, decsAndStatements);
+		return pg;
 	}
 
 	void declaration() throws SyntaxException {
