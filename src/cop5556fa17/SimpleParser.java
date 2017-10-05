@@ -60,29 +60,20 @@ public class SimpleParser {
 	final List<Kind> stmnt_start =Arrays.asList(new Kind[]{IDENTIFIER});
 	
 	void program() throws SyntaxException {
-		//TODO  implement this
-		if (t.kind == EOF)
-			throw new SyntaxException(t, "File is empty!\n");
-		if (t.kind == IDENTIFIER){
-			consume();
-			while (t.kind != EOF){
-				if (dec_start.contains(t.kind)) {
-					declaration();
-					match(SEMI);
-				}
-				else if (stmnt_start.contains(t.kind)) {
-					statement();
-					match(SEMI);
-				}
-				else {
-					String message = t.kind + " at " + t.line + ":" + t.pos_in_line + "\n";
-					throw new SyntaxException(t, message);
-				}
+		match(IDENTIFIER);
+		while (t.kind != EOF){
+			if (dec_start.contains(t.kind)) {
+				declaration();
+				match(SEMI);
 			}
-		}
-		else {
-			String message = t.kind + " at " + t.line + ":" + t.pos_in_line + "\n";
-			throw new SyntaxException(t, message);
+			else if (stmnt_start.contains(t.kind)) {
+				statement();
+				match(SEMI);
+			}
+			else {
+				String message = t.kind + " at " + t.line + ":" + t.pos_in_line + "\n";
+				throw new SyntaxException(t, message);
+			}
 		}
 	}
 
