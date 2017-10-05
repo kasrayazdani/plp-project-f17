@@ -64,14 +64,13 @@ public class Parser {
 	
 	Program program() throws SyntaxException {
 		//TODO  implement this
-		Token ft = t;
-		match(IDENTIFIER);
 		Program pg = null;
 		ArrayList<ASTNode> decsAndStatements = new ArrayList<ASTNode>();
+		Token ft = t;
+		match(IDENTIFIER);
 		while (t.kind != EOF){
 			if (dec_start.contains(t.kind)) {
-				//decsAndStatements.add();
-				declaration();
+				decsAndStatements.add(declaration());
 				match(SEMI);
 			}
 			else if (stmnt_start.contains(t.kind)) {
@@ -88,77 +87,110 @@ public class Parser {
 		return pg;
 	}
 
-	void declaration() throws SyntaxException {
+	Declaration declaration() throws SyntaxException {
+		Declaration dec = null;
 		Kind dec_type = t.kind;
 		switch(dec_type) {
 		case KW_int:
 		case KW_boolean:
-			consume();
-			var_declaration();
+			//consume();
+			dec = var_declaration();
 			break;
 		
 		case KW_image:
-			consume();
-			img_declaration();
+			//consume();
+			dec = img_declaration();
 			break;
 		
 		case KW_url:
 		case KW_file:
-			consume();
-			ss_declaration();
+			//consume();
+			dec = ss_declaration();
 			break;
 			
 		default:
 			String message = t.kind + " at " + t.line + ":" + t.pos_in_line + "\n";
 			throw new SyntaxException(t, message);
 		}
+		return dec;
 	}
 
-	void var_declaration() throws SyntaxException {
+	Declaration_Variable var_declaration() throws SyntaxException {
+		Declaration_Variable dec_var;
+		Expression e = null;
+		Token ft = t;
+		Token type = t;
+		consume();
+		Token name = t;
 		match(IDENTIFIER);
 		if (t.kind != SEMI) {
 			match(OP_ASSIGN);
-			expression();
+			e = expression();
 		}
+		dec_var = new Declaration_Variable(ft, type, name, e);
+		return dec_var;
 	}
 	
-	void img_declaration() throws SyntaxException {
+	Declaration_Image img_declaration() throws SyntaxException {
+		Declaration_Image dec_img;
+		Token ft = t;
+		Expression xSize = null;
+		Expression ySize = null;
 		if (t.kind != IDENTIFIER) {
 			match(LSQUARE);
-			expression();
+			xSize = expression();
 			match(COMMA);
-			expression();
+			ySize = expression();
 			match(RSQUARE);
 		}
+		Token name = t; 
 		match(IDENTIFIER);
+		Source source = null;
 		if (t.kind != SEMI) {
 			match(OP_LARROW);
-			resolve_source();
+			source = resolve_source();
 		}
+		dec_img = new Declaration_Image(ft, xSize, ySize, name, source);
+		return dec_img;
 	}
 	
-	void ss_declaration() throws SyntaxException {
+	Declaration_SourceSink ss_declaration() throws SyntaxException {
+		Declaration_SourceSink dec_ss;
+		Token ft = t;
+		Token type = ft;
+		consume();
+		Token name = t;
 		match(IDENTIFIER);
 		match(OP_ASSIGN);
-		resolve_source();
+		Source source = resolve_source();
+		dec_ss = new Declaration_SourceSink(ft, type, name, source);
+		return dec_ss;
 	}
 	
-	void resolve_source() throws SyntaxException {
+	Source resolve_source() throws SyntaxException {
+		Source source = null;
+		Token ft = t;
 		switch(t.kind) {
 		case STRING_LITERAL:
+			String fileOrUrl = ft.getText();
 			consume();
+			source = new Source_StringLiteral(ft,fileOrUrl);
 			break;	
 		case OP_AT:
 			consume();
-			expression();
+			Expression e = expression();
+			source = new Source_CommandLineParam(ft, e);
 			break;
 		case IDENTIFIER:
-			consume();
+			//consume();
+			Token name = ft;
+			source = new Source_Ident(ft, name);
 			break;
 		default:
 			String message = t.kind + " at " + t.line + ":" + t.pos_in_line + "\n";
 			throw new SyntaxException(t, message);
 		}
+		return source;
 	}
 	
 	void statement() throws SyntaxException {
@@ -242,8 +274,9 @@ public class Parser {
 	 * 
 	 * @throws SyntaxException
 	 */
-	void expression() throws SyntaxException {
+	Expression expression() throws SyntaxException {
 		//TODO implement this.
+		Expression e = null;
 		or_expression();
 		if (t.kind==OP_Q) {
 			match(OP_Q);
@@ -251,6 +284,7 @@ public class Parser {
 			match(OP_COLON);
 			expression();
 		}
+		return e;
 		//throw new UnsupportedOperationException();
 	}
 
