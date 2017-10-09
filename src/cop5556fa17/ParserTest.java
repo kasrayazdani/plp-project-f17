@@ -93,11 +93,11 @@ public class ParserTest {
 		Program ast = parser.parse();
 		show(ast);
 		assertEquals(ast.name, "prog");
-		Statement_Out stmnt = (Statement_Out) ast.decsAndStatements.get(0);
-		assertEquals("output", stmnt.name);
-		assertEquals("img2show", ((Sink_Ident) stmnt.sink).name);
-		stmnt = (Statement_Out) ast.decsAndStatements.get(1);
-		assertEquals("output", stmnt.name);
-		assertEquals(KW_SCREEN, ((Sink_SCREEN) stmnt.sink).kind);
+		Statement_Out line1 = (Statement_Out) ast.decsAndStatements.get(0);
+		assertEquals("output", line1.name);
+		assertEquals("img2show", ((Sink_Ident) line1.sink).name);
+		Statement_Out line2 = (Statement_Out) ast.decsAndStatements.get(1);
+		assertEquals("output", line2.name);
+		assertEquals(KW_SCREEN, ((Sink_SCREEN) line2.sink).kind);
 	}
 }
