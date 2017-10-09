@@ -74,8 +74,7 @@ public class Parser {
 				match(SEMI);
 			}
 			else if (stmnt_start.contains(t.kind)) {
-				//decsAndStatements.add();
-				statement();
+				decsAndStatements.add(statement());
 				match(SEMI);
 			}
 			else {
@@ -294,9 +293,8 @@ public class Parser {
 			sink = new Sink_Ident(ft, name_ident);
 			break;
 		case KW_SCREEN:
-			Token name_screen = t;
 			consume();
-			sink = new Sink_Ident(ft, name_screen);
+			sink = new Sink_SCREEN(ft);
 			break;
 		default:
 			String message = t.kind + " at " + t.line + ":" + t.pos_in_line + "\n";

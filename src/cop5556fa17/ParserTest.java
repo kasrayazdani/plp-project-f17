@@ -76,12 +76,28 @@ public class ParserTest {
 		show(ast);
 		assertEquals(ast.name, "prog"); 
 		//This should have one Declaration_Variable object, which is at position 0 in the decsAndStatements list
-		Declaration_Variable dec = (Declaration_Variable) ast.decsAndStatements
-				.get(0);  
+		Declaration_Variable dec = (Declaration_Variable) ast.decsAndStatements.get(0);  
 		assertEquals(KW_int, dec.type.kind);
 		assertEquals("k", dec.name);
 		assertNull(dec.e);
 	}
 
-
+	@Test
+	public void testStmnt1_imgOut() throws LexicalException, SyntaxException {
+		String input = "prog output -> img2show;\n"
+					 + "output -> SCREEN;\n";
+		show(input);
+		Scanner scanner = new Scanner(input).scan(); 
+		show(scanner); 
+		Parser parser = new Parser(scanner);
+		Program ast = parser.parse();
+		show(ast);
+		assertEquals(ast.name, "prog");
+		Statement_Out stmnt = (Statement_Out) ast.decsAndStatements.get(0);
+		assertEquals("output", stmnt.name);
+		assertEquals("img2show", ((Sink_Ident) stmnt.sink).name);
+		stmnt = (Statement_Out) ast.decsAndStatements.get(1);
+		assertEquals("output", stmnt.name);
+		assertEquals(KW_SCREEN, ((Sink_SCREEN) stmnt.sink).kind);
+	}
 }
