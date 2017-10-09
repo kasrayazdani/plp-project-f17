@@ -193,28 +193,43 @@ public class Parser {
 		return source;
 	}
 	
-	void statement() throws SyntaxException {
+	Statement statement() throws SyntaxException {
+		Statement statement = null;
+		Token ft = t;
+		Token name = ft;
+		Expression e = null;
 		match(IDENTIFIER);
 		switch(t.kind) {
 		case LSQUARE:
-		case OP_ASSIGN:
-			assign_statement();
+		case OP_ASSIGN:				//AssignStatement
+			Index index = null;
+			if (t.kind==LSQUARE) {
+				match(LSQUARE);
+				index = lhsSelector();
+				match(RSQUARE);
+			}
+			match(OP_ASSIGN);
+			e = expression();
+			LHS lhs = new LHS(ft, name, index);
+			statement = new Statement_Assign(ft, lhs, e);
 			break;
 		case OP_RARROW:				//ImageOutStatement
 			consume();
-			resolve_sink();
+			statement = new Statement_Out(ft, name, resolve_sink());
 			break;
 		case OP_LARROW:				//ImageInStatement
 			consume();
+			statement = new Statement_In(ft, name, resolve_source());
 			resolve_source();
 			break;
 		default:
 			String message = t.kind + " at " + t.line + ":" + t.pos_in_line + "\n";
 			throw new SyntaxException(t, message);
 		}
+		return statement;
 	}
 	
-	void assign_statement() throws SyntaxException {
+	/*void assign_statement() throws SyntaxException {
 		switch(t.kind) {
 		case LSQUARE:				//Lhs
 			match(LSQUARE);
@@ -231,40 +246,63 @@ public class Parser {
 			String message = t.kind + " at " + t.line + ":" + t.pos_in_line + "\n";
 			throw new SyntaxException(t, message);
 		}
-	}
+	}*/
 	
-	void lhsSelector() throws SyntaxException {
+	Index lhsSelector() throws SyntaxException {
+		Index index = null;
+		Token ft, ft_lhs;
+		Expression e0 = null;
+		Expression e1 = null;
+		Kind kind;
 		match(LSQUARE);
+		ft_lhs = t;
 		switch(t.kind) {
 		case KW_x:
+			ft = t; kind = t.kind;
 			match(KW_x);
+			e0 = new Expression_PredefinedName(ft, kind);
 			match(COMMA);
+			ft = t; kind = t.kind;
 			match(KW_y);
+			e1 = new Expression_PredefinedName(ft, kind);
 			break;
 		case KW_r:
+			ft = t; kind = t.kind;
 			match(KW_r);
+			e0 = new Expression_PredefinedName(t, kind);
 			match(COMMA);
+			ft = t; kind = t.kind;
 			match(KW_A);
+			e1 = new Expression_PredefinedName(t, kind);
 			break;
 		default:
 			String message = t.kind + " at " + t.line + ":" + t.pos_in_line + "\n";
 			throw new SyntaxException(t, message);
 		}
 		match(RSQUARE);
+		index = new Index(ft_lhs, e0, e1);
+		return index;
 	}
 	
-	void resolve_sink() throws SyntaxException {
+	Sink resolve_sink() throws SyntaxException {
+		Sink sink = null;
+		Token ft = t;
 		switch(t.kind) {
 		case IDENTIFIER:
+			Token name_ident = t;
 			consume();
+			sink = new Sink_Ident(ft, name_ident);
 			break;
 		case KW_SCREEN:
+			Token name_screen = t;
 			consume();
+			sink = new Sink_Ident(ft, name_screen);
 			break;
 		default:
 			String message = t.kind + " at " + t.line + ":" + t.pos_in_line + "\n";
 			throw new SyntaxException(t, message);
 		}
+		return sink;
 	}
 	
 	/**
