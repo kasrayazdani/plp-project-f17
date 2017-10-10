@@ -195,7 +195,7 @@ public class Parser {
 	Statement statement() throws SyntaxException {
 		Statement statement = null;
 		Token ft = t;
-		Token name = ft;
+		Token name = t;
 		Expression e = null;
 		match(IDENTIFIER);
 		switch(t.kind) {
@@ -207,9 +207,9 @@ public class Parser {
 				index = lhsSelector();
 				match(RSQUARE);
 			}
+			LHS lhs = new LHS(ft, name, index);
 			match(OP_ASSIGN);
 			e = expression();
-			LHS lhs = new LHS(ft, name, index);
 			statement = new Statement_Assign(ft, lhs, e);
 			break;
 		case OP_RARROW:				//ImageOutStatement
@@ -248,12 +248,12 @@ public class Parser {
 	}*/
 	
 	Index lhsSelector() throws SyntaxException {
+		match(LSQUARE);
 		Index index = null;
-		Token ft_lhs = t;
+		Token index_ft = t;
 		Expression e0 = null;
 		Expression e1 = null;
 		Kind kind;
-		match(LSQUARE);
 		Token ft;
 		switch(t.kind) {
 		case KW_x:
@@ -279,7 +279,7 @@ public class Parser {
 			throw new SyntaxException(t, message);
 		}
 		match(RSQUARE);
-		index = new Index(ft_lhs, e0, e1);
+		index = new Index(index_ft, e0, e1);
 		return index;
 	}
 	
@@ -313,136 +313,225 @@ public class Parser {
 	Expression expression() throws SyntaxException {
 		//TODO implement this.
 		Expression e = null;
-		or_expression();
+		Token ft = t;
+		Expression condition = null;
+		Expression trueExpression = null;
+		Expression falseExpression = null;
+		condition = or_expression();
 		if (t.kind==OP_Q) {
 			match(OP_Q);
-			expression();
+			trueExpression = expression();
 			match(OP_COLON);
-			expression();
+			falseExpression = expression();
 		}
+		if (trueExpression != null)
+			e =  new Expression_Conditional(ft, condition, trueExpression, falseExpression);
+		else
+			e = condition;
 		return e;
 		//throw new UnsupportedOperationException();
 	}
 
-	void or_expression() throws SyntaxException {
-		and_expression();
+	Expression_Binary or_expression() throws SyntaxException {
+		Expression_Binary or_expr = null;
+		Token ft = t;
+		Expression_Binary e0 = and_expression();
+		Token op = null;
+		Expression_Binary e1 = null;
 		while (t.kind == OP_OR) {
+			op = t;
 			consume();
-			and_expression();
+			e1 = and_expression();
 		}
+		or_expr = new Expression_Binary(ft, e0, op, e1);
+		return or_expr;
 	}
 	
-	void and_expression() throws SyntaxException {
-		eq_expression();
+	Expression_Binary and_expression() throws SyntaxException {
+		Expression_Binary and_expr = null;
+		Token ft = t;
+		Expression_Binary e0 = eq_expression();
+		Token op = null;
+		Expression_Binary e1 = null;
 		while(t.kind == OP_AND) {
+			op = t;
 			consume();
-			eq_expression();
+			e1 = eq_expression();
 		}
+		and_expr = new Expression_Binary(ft, e0, op, e1);
+		return and_expr;
 	}
 	
-	void eq_expression() throws SyntaxException {
-		rel_expression();
+	Expression_Binary eq_expression() throws SyntaxException {
+		Expression_Binary eq_expr = null;
+		Token ft = t;
+		Expression_Binary e0 = rel_expression();
+		Token op = null;
+		Expression_Binary e1 = null;
 		while(Arrays.asList(new Kind[]{OP_EQ,OP_NEQ}).contains(t.kind)) {
+			op = t;
 			consume();
-			rel_expression();			
+			e1 = rel_expression();			
 		}
+		eq_expr = new Expression_Binary(ft, e0, op, e1);
+		return eq_expr;
 	}
 	
-	void rel_expression() throws SyntaxException {
-		add_expression();
+	Expression_Binary rel_expression() throws SyntaxException {
+		Expression_Binary rel_expr = null;
+		Token ft = t;
+		Expression_Binary e0 = add_expression();
+		Token op = null;
+		Expression_Binary e1 = null;
 		while(Arrays.asList(new Kind[]{OP_LT,OP_GT,OP_LE,OP_GE}).contains(t.kind)) {
+			op = t;
 			consume();
-			add_expression();
+			e1 = add_expression();
 		}
+		rel_expr = new Expression_Binary(ft, e0, op, e1);
+		return rel_expr;
 	}
 	
-	void add_expression() throws SyntaxException {
-		mult_expression();
+	Expression_Binary add_expression() throws SyntaxException {
+		Expression_Binary add_expr = null;
+		Token ft = t;
+		Expression_Binary e0 = mult_expression();
+		Token op = null;
+		Expression_Binary e1 = null;
 		while(Arrays.asList(new Kind[]{OP_PLUS,OP_MINUS}).contains(t.kind)) {
 			consume();
-			mult_expression();
+			e1 = mult_expression();
 		}
+		add_expr = new Expression_Binary(ft, e0, op, e1);
+		return add_expr;
 	}
 	
-	void mult_expression() throws SyntaxException {
-		unary_expression();
+	Expression_Binary mult_expression() throws SyntaxException {
+		Expression_Binary mult_expr = null;
+		Token ft = t;
+		Expression_Unary e0 = unary_expression();
+		Token op = null;
+		Expression_Unary e1 = null;
 		while(Arrays.asList(new Kind[]{OP_TIMES,OP_DIV,OP_MOD}).contains(t.kind)) {
+			op = t;
 			consume();
-			unary_expression();
+			e1 = unary_expression();
 		}
+		mult_expr = new Expression_Binary(ft, e0, op, e1);
+		return mult_expr;
 	}
 	
-	void unary_expression() throws SyntaxException {
+	Expression_Unary unary_expression() throws SyntaxException {
 		//TODO .. not LL(1) possibly
+		Expression_Unary unary_expr = null;
+		Token ft = t;
+		Token op = null;
+		Expression e = null;
 		if (t.kind==OP_PLUS || t.kind==OP_MINUS) {
+			op = t;
 			consume();
-			unary_expression();
+			e = unary_expression();
 		}
 		else
-			unary_expression_notplusminus();
+			e = unary_expression_notplusminus();
+		unary_expr = new Expression_Unary(ft, op, e);
+		return unary_expr;
 	}
 	
-	void unary_expression_notplusminus() throws SyntaxException {
+	Expression unary_expression_notplusminus() throws SyntaxException {
+		Expression e = null;
 		if (t.kind == OP_EXCL) {
+			Token ft = t;
+			Token op = t;
 			consume();
-			unary_expression();
+			e = new Expression_Unary(ft, op, unary_expression());
 		}
 		else if (t.kind == IDENTIFIER) {
-			identOrPixelSelector_expression();
+			e = identOrPixelSelector_expression();
 		}
 		else if (Arrays.asList(new Kind[]{KW_x,KW_y,KW_r,KW_a,
 										  KW_X,KW_Y,KW_Z,KW_A,KW_R,
 										  KW_DEF_X,KW_DEF_Y}).contains(t.kind)) {
+			Token ft = t;
 			consume();
+			e = new Expression_PredefinedName(ft, ft.kind);
 		}
 		else
-			primary();
+			e = primary();
+		return e;
 	}
 	
-	void identOrPixelSelector_expression() throws SyntaxException {
+	Expression identOrPixelSelector_expression() throws SyntaxException {
+		Expression e = null;
+		Token ft = t;
+		Token ident = t;
+		Token name = t;
+		Index index = null;
 		match(IDENTIFIER);
 		if (t.kind == LSQUARE) {
 			match(LSQUARE);
-			selector();
+			index = selector();
 			match(RSQUARE);
 		}
+		if (index != null)
+			e = new Expression_PixelSelector(ft, name, index);
+		else
+			e = new Expression_Ident(ft, ident);
+		return e;
 	}
 	
-	void primary() throws SyntaxException {
-		if (t.kind == INTEGER_LITERAL)
+	Expression primary() throws SyntaxException {
+		Expression e = null;
+		Token ft = t;
+		if (t.kind == INTEGER_LITERAL) {
 			consume();
+			e = new Expression_IntLit(ft, ft.intVal());
+		}
 		else if (t.kind == LPAREN) {
 			match(LPAREN);
-			expression();
+			e = expression();
 			match(RPAREN);
 		}
-		else if (t.kind == BOOLEAN_LITERAL)
+		else if (t.kind == BOOLEAN_LITERAL) {
 			consume();
+			e = new Expression_BooleanLit(ft, ft.toString()=="true" ? true : false);
+		}
 		else
-			function_application();
+			e = function_application();
+		return e;
 	}
 	
-	void selector() throws SyntaxException {
-		expression();
+	Index selector() throws SyntaxException {
+		Index index = null;
+		Token ft = t;
+		Expression e0 = expression();
 		match(COMMA);
-		expression();
+		Expression e1 = expression();
+		index = new Index(ft, e0, e1);
+		return index;
 	}
 	
-	void function_application() throws SyntaxException {
+	Expression function_application() throws SyntaxException {
+		Expression e = null;
+		Token ft = t;
+		Kind func;
 		if (Arrays.asList(new Kind[]{KW_sin,KW_cos,KW_atan,
 									 KW_abs,KW_cart_x,KW_cart_y,
 									 KW_polar_a,KW_polar_r}).contains(t.kind)) {
+			func = t.kind;
 			consume();
 			switch(t.kind) {
 			case LPAREN:
 				match(LPAREN);
-				expression();
+				Expression expr_arg = expression();
 				match(RPAREN);
+				e = new Expression_FunctionAppWithExprArg(ft, func, expr_arg);
 				break;
 			case LSQUARE:
 				match(LSQUARE);
-				selector();
+				Index index_arg = selector();
 				match(RSQUARE);
+				e = new Expression_FunctionAppWithIndexArg(ft, func, index_arg);
 				break;
 			default:
 				String message = t.kind + " at " + t.line + ":" + t.pos_in_line + "\n";
@@ -453,6 +542,7 @@ public class Parser {
 			String message = t.kind + " at " + t.line + ":" + t.pos_in_line + "\n";
 			throw new SyntaxException(t, message);
 		}
+		return e;
 	}
 	
 	/**

@@ -100,4 +100,23 @@ public class ParserTest {
 		assertEquals("output", line2.name);
 		assertEquals(KW_SCREEN, ((Sink_SCREEN) line2.sink).kind);
 	}
+	
+	@Test
+	public void testStmnt2_assign() throws LexicalException, SyntaxException {
+		String input = "prog assign_var [[x,y]] = junk;";
+		show(input);
+		Scanner scanner = new Scanner(input).scan(); 
+		show(scanner); 
+		Parser parser = new Parser(scanner);
+		Program ast = parser.parse();
+		show(ast);
+		assertEquals(ast.name, "prog");
+		Statement_Assign stmnt = (Statement_Assign) ast.decsAndStatements.get(0);
+		LHS lhs = stmnt.lhs;
+		assertEquals("assign_var", lhs.name.toString());
+		Index index = lhs.index;
+		assertEquals(KW_x, index.firstToken.kind);
+		assertEquals(KW_x, ((Expression_PredefinedName) index.e0).kind);
+		assertEquals(KW_y, ((Expression_PredefinedName) index.e1).kind);
+	}
 }
