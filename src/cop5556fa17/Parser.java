@@ -332,109 +332,96 @@ public class Parser {
 		//throw new UnsupportedOperationException();
 	}
 
-	Expression_Binary or_expression() throws SyntaxException {
-		Expression_Binary or_expr = null;
+	Expression or_expression() throws SyntaxException {
+		Expression or_expr = null;
 		Token ft = t;
-		Expression_Binary e0 = and_expression();
-		Token op = null;
-		Expression_Binary e1 = null;
+		or_expr = and_expression();
 		while (t.kind == OP_OR) {
-			op = t;
+			Token op = t;
 			consume();
-			e1 = and_expression();
+			Expression e1 = and_expression();
+			or_expr = new Expression_Binary(ft, or_expr, op, e1);
 		}
-		or_expr = new Expression_Binary(ft, e0, op, e1);
 		return or_expr;
 	}
 	
-	Expression_Binary and_expression() throws SyntaxException {
-		Expression_Binary and_expr = null;
+	Expression and_expression() throws SyntaxException {
+		Expression and_expr = null;
 		Token ft = t;
-		Expression_Binary e0 = eq_expression();
-		Token op = null;
-		Expression_Binary e1 = null;
+		and_expr = eq_expression();
 		while(t.kind == OP_AND) {
-			op = t;
+			Token op = t;
 			consume();
-			e1 = eq_expression();
+			Expression e1 = eq_expression();
+			and_expr = new Expression_Binary(ft, and_expr, op, e1);
 		}
-		and_expr = new Expression_Binary(ft, e0, op, e1);
 		return and_expr;
 	}
 	
-	Expression_Binary eq_expression() throws SyntaxException {
-		Expression_Binary eq_expr = null;
+	Expression eq_expression() throws SyntaxException {
+		Expression eq_expr = null;
 		Token ft = t;
-		Expression_Binary e0 = rel_expression();
-		Token op = null;
-		Expression_Binary e1 = null;
+		eq_expr = rel_expression();
 		while(Arrays.asList(new Kind[]{OP_EQ,OP_NEQ}).contains(t.kind)) {
-			op = t;
+			Token op = t;
 			consume();
-			e1 = rel_expression();			
+			Expression e1 = rel_expression();
+			eq_expr = new Expression_Binary(ft, eq_expr, op, e1);
 		}
-		eq_expr = new Expression_Binary(ft, e0, op, e1);
 		return eq_expr;
 	}
 	
-	Expression_Binary rel_expression() throws SyntaxException {
-		Expression_Binary rel_expr = null;
+	Expression rel_expression() throws SyntaxException {
+		Expression rel_expr = null;
 		Token ft = t;
-		Expression_Binary e0 = add_expression();
-		Token op = null;
-		Expression_Binary e1 = null;
+		rel_expr = add_expression();
 		while(Arrays.asList(new Kind[]{OP_LT,OP_GT,OP_LE,OP_GE}).contains(t.kind)) {
-			op = t;
+			Token op = t;
 			consume();
-			e1 = add_expression();
+			Expression e1 = add_expression();
+			rel_expr = new Expression_Binary(ft, rel_expr, op, e1);
 		}
-		rel_expr = new Expression_Binary(ft, e0, op, e1);
 		return rel_expr;
 	}
 	
-	Expression_Binary add_expression() throws SyntaxException {
-		Expression_Binary add_expr = null;
+	Expression add_expression() throws SyntaxException {
+		Expression add_expr = null;
 		Token ft = t;
-		Expression_Binary e0 = mult_expression();
-		Token op = null;
-		Expression_Binary e1 = null;
+		add_expr = mult_expression();
 		while(Arrays.asList(new Kind[]{OP_PLUS,OP_MINUS}).contains(t.kind)) {
+			Token op = t;
 			consume();
-			e1 = mult_expression();
+			Expression e1 = mult_expression();
+			add_expr = new Expression_Binary(ft, add_expr, op, e1);
 		}
-		add_expr = new Expression_Binary(ft, e0, op, e1);
 		return add_expr;
 	}
 	
-	Expression_Binary mult_expression() throws SyntaxException {
-		Expression_Binary mult_expr = null;
+	Expression mult_expression() throws SyntaxException {
+		Expression mult_expr = null;
 		Token ft = t;
-		Expression_Unary e0 = unary_expression();
-		Token op = null;
-		Expression_Unary e1 = null;
+		mult_expr = unary_expression();
 		while(Arrays.asList(new Kind[]{OP_TIMES,OP_DIV,OP_MOD}).contains(t.kind)) {
-			op = t;
+			Token op = t;
 			consume();
-			e1 = unary_expression();
+			Expression e1 = unary_expression();
+			mult_expr = new Expression_Binary(ft, mult_expr, op, e1);
 		}
-		mult_expr = new Expression_Binary(ft, e0, op, e1);
 		return mult_expr;
 	}
 	
-	Expression_Unary unary_expression() throws SyntaxException {
+	Expression unary_expression() throws SyntaxException {
 		//TODO .. not LL(1) possibly
-		Expression_Unary unary_expr = null;
-		Token ft = t;
-		Token op = null;
-		Expression e = null;
+		Expression unary_expr = null;
 		if (t.kind==OP_PLUS || t.kind==OP_MINUS) {
-			op = t;
+			Token ft = t;
+			Token op = t;
 			consume();
-			e = unary_expression();
+			Expression e = unary_expression();
+			unary_expr = new Expression_Unary(ft, op, e);
 		}
 		else
-			e = unary_expression_notplusminus();
-		unary_expr = new Expression_Unary(ft, op, e);
+			unary_expr = unary_expression_notplusminus();
 		return unary_expr;
 	}
 	
