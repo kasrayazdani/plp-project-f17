@@ -67,7 +67,8 @@ public class ParserTest {
 
 	@Test
 	public void testDec1() throws LexicalException, SyntaxException {
-		String input = "prog int k;";
+		String input = "prog int k;\n"
+					 + "int l = 5;";
 		show(input);
 		Scanner scanner = new Scanner(input).scan(); 
 		show(scanner); 
@@ -76,10 +77,16 @@ public class ParserTest {
 		show(ast);
 		assertEquals(ast.name, "prog"); 
 		//This should have one Declaration_Variable object, which is at position 0 in the decsAndStatements list
-		Declaration_Variable dec = (Declaration_Variable) ast.decsAndStatements.get(0);  
-		assertEquals(KW_int, dec.type.kind);
-		assertEquals("k", dec.name);
-		assertNull(dec.e);
+		Declaration_Variable dec1 = (Declaration_Variable) ast.decsAndStatements.get(0);  
+		assertEquals(KW_int, dec1.type.kind);
+		assertEquals("k", dec1.name);
+		assertNull(dec1.e);
+		Declaration_Variable dec2 = (Declaration_Variable) ast.decsAndStatements.get(1);
+		assertEquals(KW_int, dec2.type.kind);
+		assertEquals("l", dec2.name);
+		assertEquals("Expression_IntLit",dec2.e.getClass().getSimpleName());
+		assertEquals(INTEGER_LITERAL, ((Expression_IntLit)dec2.e).firstToken.kind);
+		assertEquals(5, ((Expression_IntLit)dec2.e).value);
 	}
 
 	@Test
