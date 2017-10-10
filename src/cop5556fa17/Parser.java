@@ -249,12 +249,12 @@ public class Parser {
 	
 	Index lhsSelector() throws SyntaxException {
 		Index index = null;
-		Token ft, ft_lhs;
+		Token ft_lhs = t;
 		Expression e0 = null;
 		Expression e1 = null;
 		Kind kind;
 		match(LSQUARE);
-		ft_lhs = t;
+		Token ft;
 		switch(t.kind) {
 		case KW_x:
 			ft = t; kind = t.kind;
