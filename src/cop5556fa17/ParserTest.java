@@ -136,6 +136,56 @@ public class ParserTest {
 	}
 	
 	@Test
+	public void testDec4() throws LexicalException, SyntaxException {
+		String input = "prog image [ A*R/Z+DEF_X-DEF_Y , (ned==alive) ] img2 <- x+y;\n";
+		show(input);        							//Display the input 
+		Scanner scanner = new Scanner(input).scan();			//Create a Scanner and initialize it
+		show(scanner);   								//Display the Scanner
+		Parser parser = new Parser(scanner);
+		thrown.expect(SyntaxException.class);
+		try {
+			Program ast = parser.parse();; //Parse the program, which should throw an exception
+		} catch (SyntaxException e) {
+			show(e);  //catch the exception and show it
+			throw e;  //rethrow for Junit
+		}
+	}
+	
+	@Test
+	public void testDec5() throws LexicalException, SyntaxException {
+		String input = "prog url facebook = \"www.facebook.com\";\n"
+				     + "file assignment = \"/home/vishal/plp.txt\";\n";
+		show(input);
+		Scanner scanner = new Scanner(input).scan(); 
+		show(scanner); 
+		Parser parser = new Parser(scanner);
+		Program ast = parser.parse();
+		show(ast);
+		assertEquals(ast.name, "prog");
+		Declaration_SourceSink ss1 = (Declaration_SourceSink) ast.decsAndStatements.get(0);
+		assertEquals(KW_url,ss1.type);
+		assertEquals("facebook", ss1.name);
+		assertEquals("www.facebook.com", ((Source_StringLiteral)ss1.source).fileOrUrl);
+		Declaration_SourceSink ss2 = (Declaration_SourceSink) ast.decsAndStatements.get(1);
+		assertEquals(KW_file,ss2.type);
+		assertEquals("assignment", ss2.name);
+		assertEquals("/home/vishal/plp.txt", ((Source_StringLiteral)ss2.source).fileOrUrl);
+		
+		input = "prog file email = str1+str2;";
+		show(input);
+		scanner = new Scanner(input).scan(); 
+		show(scanner);
+		parser = new Parser(scanner); //Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			ast = parser.parse();; //Parse the program, which should throw an exception
+		} catch (SyntaxException e) {
+			show(e);  //catch the exception and show it
+			throw e;  //rethrow for Junit
+		}
+	}
+	
+	@Test
 	public void testStmnt1_imgOut() throws LexicalException, SyntaxException {
 		String input = "prog output -> img2show;\n"
 					 + "output -> SCREEN;\n";
@@ -152,6 +202,19 @@ public class ParserTest {
 		Statement_Out line2 = (Statement_Out) ast.decsAndStatements.get(1);
 		assertEquals("output", line2.name);
 		assertEquals(KW_SCREEN, ((Sink_SCREEN) line2.sink).kind);
+		
+		input = "prog output -> image;";
+		show(input);
+		scanner = new Scanner(input).scan(); 
+		show(scanner);
+		parser = new Parser(scanner); //Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			ast = parser.parse();; //Parse the program, which should throw an exception
+		} catch (SyntaxException e) {
+			show(e);  //catch the exception and show it
+			throw e;  //rethrow for Junit
+		}
 	}
 	
 	@Test
@@ -173,12 +236,25 @@ public class ParserTest {
 		assertEquals("junk", ((Source_Ident)_2.source).name);
 		Statement_In _3 = (Statement_In) ast.decsAndStatements.get(2);
 		Source_CommandLineParam s = (Source_CommandLineParam)_3.source;
-		Expression_Binary e = (Expression_Binary)s.paramNum;
-		assertEquals(OP_OR,e.op);
-		Expression_Binary e0 = (Expression_Binary)e.e0;
+		Expression_Binary expr = (Expression_Binary)s.paramNum;
+		assertEquals(OP_OR,expr.op);
+		Expression_Binary e0 = (Expression_Binary)expr.e0;
 		assertEquals(OP_PLUS,e0.op);
-		Expression_Binary e1 = (Expression_Binary)e.e1;
+		Expression_Binary e1 = (Expression_Binary)expr.e1;
 		assertEquals(OP_MINUS,e1.op);
+		
+		input = "prog input <- @image;";
+		show(input);
+		scanner = new Scanner(input).scan(); 
+		show(scanner);
+		parser = new Parser(scanner); //Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			ast = parser.parse();; //Parse the program, which should throw an exception
+		} catch (SyntaxException e) {
+			show(e);  //catch the exception and show it
+			throw e;  //rethrow for Junit
+		}
 	}
 	
 	@Test
@@ -198,5 +274,82 @@ public class ParserTest {
 		assertEquals(KW_x, index.firstToken.kind);
 		assertEquals(KW_x, ((Expression_PredefinedName) index.e0).kind);
 		assertEquals(KW_y, ((Expression_PredefinedName) index.e1).kind);
+		
+		input = "prog lhs [x,y] = matrix[xx,yy];";
+		show(input);
+		scanner = new Scanner(input).scan(); 
+		show(scanner);
+		parser = new Parser(scanner); //Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			ast = parser.parse();; //Parse the program, which should throw an exception
+		} catch (SyntaxException e) {
+			show(e);  //catch the exception and show it
+			throw e;  //rethrow for Junit
+		}
+	}
+	
+	@Test
+	public void testStmnt4_assign2() throws LexicalException, SyntaxException {
+		String input = "prog lhs [[x,A]] = matrix[xx,yy];";
+		show(input);        							//Display the input 
+		Scanner scanner = new Scanner(input).scan();			//Create a Scanner and initialize it
+		show(scanner);
+		Parser parser = new Parser(scanner);
+		thrown.expect(SyntaxException.class);
+		try {
+			Program ast = parser.parse();; //Parse the program, which should throw an exception
+		} catch (SyntaxException e) {
+			show(e);  //catch the exception and show it
+			throw e;  //rethrow for Junit
+		}
+	}
+	
+	@Test
+	public void testStmnt5_assign3() throws LexicalException, SyntaxException {
+		String input = "prog lhs [[r,A]] <- matrix[xx,yy];";
+		show(input);        							//Display the input 
+		Scanner scanner = new Scanner(input).scan();			//Create a Scanner and initialize it
+		show(scanner);
+		Parser parser = new Parser(scanner);
+		thrown.expect(SyntaxException.class);
+		try {
+			Program ast = parser.parse();; //Parse the program, which should throw an exception
+		} catch (SyntaxException e) {
+			show(e);  //catch the exception and show it
+			throw e;  //rethrow for Junit
+		}
+	}
+	
+	@Test
+	public void testStmnt6_assign4() throws LexicalException, SyntaxException {
+		String input = "prog lhs [ [x,y] ];";
+		show(input);        							//Display the input 
+		Scanner scanner = new Scanner(input).scan();			//Create a Scanner and initialize it
+		show(scanner);
+		Parser parser = new Parser(scanner);
+		thrown.expect(SyntaxException.class);
+		try {
+			Program ast = parser.parse();; //Parse the program, which should throw an exception
+		} catch (SyntaxException e) {
+			show(e);  //catch the exception and show it
+			throw e;  //rethrow for Junit
+		}
+	}
+	
+	@Test
+	public void testStmnt7_assign5() throws LexicalException, SyntaxException {
+		String input = "prog lhs = x | @;";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();				//Create a Scanner and initialize it
+		show(scanner);
+		Parser parser = new Parser(scanner);
+		thrown.expect(SyntaxException.class);
+		try {
+			Program ast = parser.parse();; //Parse the program, which should throw an exception
+		} catch (SyntaxException e) {
+			show(e);  //catch the exception and show it
+			throw e;  //rethrow for Junit
+		}
 	}
 }
