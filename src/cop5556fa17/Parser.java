@@ -181,7 +181,7 @@ public class Parser {
 			source = new Source_CommandLineParam(ft, e);
 			break;
 		case IDENTIFIER:
-			//consume();
+			consume();
 			Token name = ft;
 			source = new Source_Ident(ft, name);
 			break;
@@ -219,7 +219,6 @@ public class Parser {
 		case OP_LARROW:				//ImageInStatement
 			consume();
 			statement = new Statement_In(ft, name, resolve_source());
-			resolve_source();
 			break;
 		default:
 			String message = t.kind + " at " + t.line + ":" + t.pos_in_line + "\n";

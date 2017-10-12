@@ -109,6 +109,33 @@ public class ParserTest {
 	}
 	
 	@Test
+	public void testStmnt_imgIn() throws LexicalException, SyntaxException {
+		String input = "prog input_img <- \"in_img\";\n"
+					 + "input_img <- junk;\n"
+					 + "input_img <- @ x+y | r-a;\n";
+		show(input);
+		Scanner scanner = new Scanner(input).scan(); 
+		show(scanner); 
+		Parser parser = new Parser(scanner);
+		Program ast = parser.parse();
+		show(ast);
+		assertEquals(ast.name, "prog");
+		Statement_In _1 = (Statement_In) ast.decsAndStatements.get(0);
+		assertEquals("input_img",_1.name);
+		assertEquals("in_img", ((Source_StringLiteral)_1.source).fileOrUrl);
+		Statement_In _2 = (Statement_In) ast.decsAndStatements.get(1);
+		assertEquals("junk", ((Source_Ident)_2.source).name);
+		Statement_In _3 = (Statement_In) ast.decsAndStatements.get(2);
+		Source_CommandLineParam s = (Source_CommandLineParam)_3.source;
+		Expression_Binary e = (Expression_Binary)s.paramNum;
+		assertEquals(OP_OR,e.op);
+		Expression_Binary e0 = (Expression_Binary)e.e0;
+		assertEquals(OP_PLUS,e0.op);
+		Expression_Binary e1 = (Expression_Binary)e.e1;
+		assertEquals(OP_MINUS,e1.op);
+	}
+	
+	@Test
 	public void testStmnt2_assign() throws LexicalException, SyntaxException {
 		String input = "prog assign_var [[x,y]] = junk;";
 		show(input);
