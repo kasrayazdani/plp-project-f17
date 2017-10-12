@@ -97,7 +97,7 @@ public class Parser {
 			break;
 		
 		case KW_image:
-			//consume();
+			consume();
 			dec = img_declaration();
 			break;
 		

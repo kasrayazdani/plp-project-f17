@@ -90,6 +90,52 @@ public class ParserTest {
 	}
 
 	@Test
+	public void testDec2() throws LexicalException, SyntaxException {
+		String input = "prog image [ A*R/Z-DEF_Y , (ned==alive) ] img2 <- \"img2\";\n";
+		show(input);
+		Scanner scanner = new Scanner(input).scan(); 
+		show(scanner); 
+		Parser parser = new Parser(scanner);
+		Program ast = parser.parse();
+		show(ast);
+		assertEquals(ast.name, "prog");
+		Declaration_Image dec = (Declaration_Image) ast.decsAndStatements.get(0);
+		Expression_Binary xSize = (Expression_Binary)dec.xSize;
+		assertEquals(OP_MINUS,xSize.op);
+		Expression_Binary ySize = (Expression_Binary)dec.ySize;
+		assertEquals(OP_EQ,ySize.op);
+		
+		input = "prog image [ A*R/Z+DEF_X-DEF_Y , (ned==alive) ] img2 <- x;\n";
+		show(input);
+		scanner = new Scanner(input).scan(); 
+		show(scanner);
+		parser = new Parser(scanner); //Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			ast = parser.parse();; //Parse the program, which should throw an exception
+		} catch (SyntaxException e) {
+			show(e);  //catch the exception and show it
+			throw e;  //rethrow for Junit
+		}
+	}
+	
+	@Test
+	public void testDec3() throws LexicalException, SyntaxException {
+		String input = "prog image [ A*R/Z+DEF_X-DEF_Y , (ned=alive) ] img2 = x;\n";
+		show(input);
+		Scanner scanner = new Scanner(input).scan(); 
+		show(scanner);
+		Parser parser = new Parser(scanner); //Create a parser
+		thrown.expect(SyntaxException.class);
+		try {
+			Program ast = parser.parse();; //Parse the program, which should throw an exception
+		} catch (SyntaxException e) {
+			show(e);  //catch the exception and show it
+			throw e;  //rethrow for Junit
+		}
+	}
+	
+	@Test
 	public void testStmnt1_imgOut() throws LexicalException, SyntaxException {
 		String input = "prog output -> img2show;\n"
 					 + "output -> SCREEN;\n";
@@ -109,7 +155,7 @@ public class ParserTest {
 	}
 	
 	@Test
-	public void testStmnt_imgIn() throws LexicalException, SyntaxException {
+	public void testStmnt2_imgIn() throws LexicalException, SyntaxException {
 		String input = "prog input_img <- \"in_img\";\n"
 					 + "input_img <- junk;\n"
 					 + "input_img <- @ x+y | r-a;\n";
@@ -136,7 +182,7 @@ public class ParserTest {
 	}
 	
 	@Test
-	public void testStmnt2_assign() throws LexicalException, SyntaxException {
+	public void testStmnt3_assign() throws LexicalException, SyntaxException {
 		String input = "prog assign_var [[x,y]] = junk;";
 		show(input);
 		Scanner scanner = new Scanner(input).scan(); 
