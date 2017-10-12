@@ -480,7 +480,7 @@ public class Parser {
 		}
 		else if (t.kind == BOOLEAN_LITERAL) {
 			consume();
-			e = new Expression_BooleanLit(ft, ft.toString()=="true" ? true : false);
+			e = new Expression_BooleanLit(ft, ft.getText().equals("true") ? true : false);
 		}
 		else
 			e = function_application();
