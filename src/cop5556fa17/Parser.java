@@ -97,7 +97,7 @@ public class Parser {
 			break;
 		
 		case KW_image:
-			consume();
+			//consume();
 			dec = img_declaration();
 			break;
 		
@@ -133,6 +133,7 @@ public class Parser {
 	Declaration_Image img_declaration() throws SyntaxException {
 		Declaration_Image dec_img;
 		Token ft = t;
+		consume();
 		Expression xSize = null;
 		Expression ySize = null;
 		if (t.kind != IDENTIFIER) {
@@ -267,11 +268,11 @@ public class Parser {
 		case KW_r:
 			ft = t; kind = t.kind;
 			match(KW_r);
-			e0 = new Expression_PredefinedName(t, kind);
+			e0 = new Expression_PredefinedName(ft, kind);
 			match(COMMA);
 			ft = t; kind = t.kind;
 			match(KW_A);
-			e1 = new Expression_PredefinedName(t, kind);
+			e1 = new Expression_PredefinedName(ft, kind);
 			break;
 		default:
 			String message = t.kind + " at " + t.line + ":" + t.pos_in_line + "\n";
