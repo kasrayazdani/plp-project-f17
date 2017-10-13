@@ -8,7 +8,6 @@ import java.util.List;
 
 import cop5556fa17.Scanner.Kind;
 import cop5556fa17.Scanner.Token;
-import cop5556fa17.SimpleParser.SyntaxException;
 
 import static cop5556fa17.Scanner.Kind.*;
 import cop5556fa17.AST.*;
