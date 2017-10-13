@@ -352,4 +352,284 @@ public class ParserTest {
 			throw e;  //rethrow for Junit
 		}
 	}
+	
+	@Test
+	public void testExpr1() throws LexicalException, SyntaxException {
+		String input = "2++-3";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();  
+		show(scanner);
+		Parser parser = new Parser(scanner);
+		Expression_Binary expr = (Expression_Binary)parser.expression();
+		show(expr);
+		assertEquals(OP_PLUS, expr.op);
+		Expression_Unary e1 = (Expression_Unary) expr.e1;
+		assertEquals(OP_PLUS, e1.op);
+		Expression_Unary e = (Expression_Unary) e1.e;
+		assertEquals(OP_MINUS,e.op);
+		assertEquals(3, ((Expression_IntLit)e.e).value);
+	}
+	
+	@Test
+	public void testExpr2() throws SyntaxException, LexicalException {
+		String input = "2 > 3 ? 4 : 1";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();  
+		show(scanner);
+		Parser parser = new Parser(scanner);
+		Expression_Conditional expr = (Expression_Conditional) parser.expression();
+		show(expr);
+		Expression_Binary condition = (Expression_Binary)expr.condition;
+		assertEquals(2,((Expression_IntLit)condition.e0).value);
+		assertEquals(OP_GT,condition.op);
+		assertEquals(3,((Expression_IntLit)condition.e1).value);
+		Expression_IntLit trueExpr = (Expression_IntLit) expr.trueExpression;
+		assertEquals(4,trueExpr.value);
+		Expression_IntLit falseExpr = (Expression_IntLit) expr.falseExpression;
+		assertEquals(1,falseExpr.value);
+	}
+	
+	@Test
+	public void testExpr3_funcApp() throws SyntaxException, LexicalException {
+		String input = "polar_a (45)";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();  
+		show(scanner);
+		Parser parser = new Parser(scanner);
+		Expression_FunctionAppWithExprArg expr1 = (Expression_FunctionAppWithExprArg) parser.expression();
+		show(expr1);
+		assertEquals(KW_polar_a, expr1.function);
+		assertEquals(45, ((Expression_IntLit)expr1.arg).value);
+		
+		input = "polar_r [cart_x(90),cart_y(90)]";
+		show(input);
+		scanner = new Scanner(input).scan();  
+		show(scanner); 
+		parser = new Parser(scanner);
+		Expression_FunctionAppWithIndexArg expr2 = (Expression_FunctionAppWithIndexArg) parser.expression();
+		show(expr2);
+		assertEquals(KW_polar_r, expr2.function);
+		Index index = expr2.arg;
+		assertEquals(KW_cart_x,((Expression_FunctionAppWithExprArg)index.e0).function);
+		assertEquals(KW_cart_y,((Expression_FunctionAppWithExprArg)index.e1).function);
+		
+		input = "sin(cart_x(90),cart_y(90))";
+		show(input);
+		scanner = new Scanner(input).scan();			//Create a Scanner and initialize it
+		show(scanner);
+		parser = new Parser(scanner);
+		thrown.expect(SyntaxException.class);
+		try {
+			Expression expr = parser.expression(); //Parse the program, which should throw an exception
+		} catch (SyntaxException e) {
+			show(e);  //catch the exception and show it
+			throw e;  //rethrow for Junit
+		}
+	}
+	
+	@Test
+	public void testExpr4_primary() throws SyntaxException, LexicalException {
+		String input = "true";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();  
+		show(scanner);
+		Parser parser = new Parser(scanner);
+		Expression_BooleanLit expr1 = (Expression_BooleanLit) parser.expression();
+		show(expr1);
+		assertEquals(true, expr1.value);
+		
+		input = "( (ned==alive) ? (true) : (false) )";
+		show(input);
+		scanner = new Scanner(input).scan();  
+		show(scanner);
+		parser = new Parser(scanner);
+		Expression_Conditional expr2 = (Expression_Conditional) parser.expression();
+		show(expr2);
+		Expression_BooleanLit trueExpr = (Expression_BooleanLit) expr2.trueExpression;
+		assertEquals(true,trueExpr.value);
+		Expression_BooleanLit falseExpr = (Expression_BooleanLit) expr2.falseExpression;
+		assertEquals(false,falseExpr.value);
+		
+		input = "(cos[ atan(90) , atan(45) ])";
+		show(input);
+		scanner = new Scanner(input).scan();  
+		show(scanner);
+		parser = new Parser(scanner);
+		Expression_FunctionAppWithIndexArg expr3 = (Expression_FunctionAppWithIndexArg) parser.expression();
+		show(expr3);
+		assertEquals(KW_cos,expr3.function);
+		Index index = expr3.arg;
+		assertEquals(KW_atan,((Expression_FunctionAppWithExprArg)index.e0).function);
+		assertEquals(KW_atan,((Expression_FunctionAppWithExprArg)index.e1).function);
+		
+		input = "( (tyrion==dead) ? false : what_the_heck? )";
+		show(input);
+		scanner = new Scanner(input).scan();				//Create a Scanner and initialize it
+		show(scanner);
+		parser = new Parser(scanner);
+		thrown.expect(SyntaxException.class);
+		try {
+			Expression expr = parser.expression(); //Parse the program, which should throw an exception
+		} catch (SyntaxException e) {
+			show(e);  //catch the exception and show it
+			throw e;  //rethrow for Junit
+		}
+	}
+	
+	@Test
+	public void testExpr5_primary() throws LexicalException, SyntaxException {
+		String input = "( sin( cos[ atan(abs(cord_x==45 ? 45 : 90)) , "
+				+ "polar_a[ atan(abs(cord_y==90 ? 90 : 45)), ] ] ) )";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();				//Create a Scanner and initialize it
+		show(scanner);
+		Parser parser = new Parser(scanner);
+		thrown.expect(SyntaxException.class);
+		try {
+			Expression expr = parser.expression();; //Parse the program, which should throw an exception
+		} catch (SyntaxException e) {
+			show(e);  //catch the exception and show it
+			throw e;  //rethrow for Junit
+		}
+	}
+	
+	@Test
+	public void testExpr6_orNand() throws LexicalException, SyntaxException {
+		String input = "!x | +y & -Z";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();				//Create a Scanner and initialize it
+		show(scanner);
+		Parser parser = new Parser(scanner);
+		Expression_Binary expr1 = (Expression_Binary) parser.expression();
+		show(expr1);
+		Expression_Unary e0 = (Expression_Unary) expr1.e0;
+		assertEquals(OP_EXCL,e0.op);
+		Expression_Binary e1 = (Expression_Binary) expr1.e1;
+		assertEquals(OP_AND,e1.op);
+		
+		input = "junk1 || junk2";
+		show(input);
+		scanner = new Scanner(input).scan();				//Create a Scanner and initialize it
+		show(scanner);
+		parser = new Parser(scanner);
+		thrown.expect(SyntaxException.class);
+		try {
+			Expression expr = parser.expression();; //Parse the program, which should throw an exception
+		} catch (SyntaxException e) {
+			show(e);  //catch the exception and show it
+			throw e;  //rethrow for Junit
+		}
+	}
+	
+	@Test
+	public void testExpr7_orNand() throws LexicalException, SyntaxException {
+		String input = "junk0 | junk1 && junk2";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();				//Create a Scanner and initialize it
+		show(scanner);
+		Parser parser = new Parser(scanner);
+		thrown.expect(SyntaxException.class);
+		try {
+			Expression expr = parser.expression();; //Parse the program, which should throw an exception
+		} catch (SyntaxException e) {
+			show(e);  //catch the exception and show it
+			throw e;  //rethrow for Junit
+		}
+	}
+	
+	@Test
+	public void testExpr8_eq() throws LexicalException, SyntaxException {
+		String input = "junk0 | junk1 & junk2===junk3";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();				//Create a Scanner and initialize it
+		show(scanner);
+		Parser parser = new Parser(scanner);
+		thrown.expect(SyntaxException.class);
+		try {
+			Expression expr = parser.expression();; //Parse the program, which should throw an exception
+		} catch (SyntaxException e) {
+			show(e);  //catch the exception and show it
+			throw e;  //rethrow for Junit
+		}
+	}
+	
+	@Test
+	public void testExpr9_eq() throws LexicalException, SyntaxException {
+		String input = "junk0 | junk1 & junk2!==junk3 ";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();				//Create a Scanner and initialize it
+		show(scanner);
+		Parser parser = new Parser(scanner);
+		thrown.expect(SyntaxException.class);
+		try {
+			Expression expr = parser.expression();; //Parse the program, which should throw an exception
+		} catch (SyntaxException e) {
+			show(e);  //catch the exception and show it
+			throw e;  //rethrow for Junit
+		}
+	}
+	
+	@Test
+	public void testExpr10_eq() throws LexicalException, SyntaxException {
+		String input = "junk0 | junk1 & junk2!=!=junk3 ";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();				//Create a Scanner and initialize it
+		show(scanner);
+		Parser parser = new Parser(scanner);
+		thrown.expect(SyntaxException.class);
+		try {
+			Expression expr = parser.expression();; //Parse the program, which should throw an exception
+		} catch (SyntaxException e) {
+			show(e);  //catch the exception and show it
+			throw e;  //rethrow for Junit
+		}
+	}
+	
+	@Test
+	public void testExpr11_eq() throws LexicalException, SyntaxException {
+		String input = "junk0 | junk1 & junk2====junk3 ";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();				//Create a Scanner and initialize it
+		show(scanner);
+		Parser parser = new Parser(scanner);
+		thrown.expect(SyntaxException.class);
+		try {
+			Expression expr = parser.expression();; //Parse the program, which should throw an exception
+		} catch (SyntaxException e) {
+			show(e);  //catch the exception and show it
+			throw e;  //rethrow for Junit
+		}
+	}
+	
+	@Test
+	public void testExpr12_eq() throws LexicalException, SyntaxException {
+		String input = "junk0 | junk1 & junk2!===junk3 ";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();				//Create a Scanner and initialize it
+		show(scanner);
+		Parser parser = new Parser(scanner);
+		thrown.expect(SyntaxException.class);
+		try {
+			Expression expr = parser.expression();; //Parse the program, which should throw an exception
+		} catch (SyntaxException e) {
+			show(e);  //catch the exception and show it
+			throw e;  //rethrow for Junit
+		}
+	}
+	
+	@Test
+	public void testExpr13_eq() throws LexicalException, SyntaxException {
+		String input = "x | @";
+		show(input);
+		Scanner scanner = new Scanner(input).scan();				//Create a Scanner and initialize it
+		show(scanner);
+		Parser parser = new Parser(scanner);
+		thrown.expect(SyntaxException.class);
+		try {
+			Expression expr = parser.expression();; //Parse the program, which should throw an exception
+		} catch (SyntaxException e) {
+			show(e);  //catch the exception and show it
+			throw e;  //rethrow for Junit
+		}
+	}
 }
