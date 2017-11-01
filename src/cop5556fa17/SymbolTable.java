@@ -18,7 +18,6 @@ public class SymbolTable {
 	
 	public boolean insert(String name, Declaration dec) {
 		if (lookupType(name) != null) {
-			System.out.println("Symbol already present");
 			return false;
 		}
 		symbol_map.put(name, dec);

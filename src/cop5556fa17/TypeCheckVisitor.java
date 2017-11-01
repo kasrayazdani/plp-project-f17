@@ -175,8 +175,8 @@ public class TypeCheckVisitor implements ASTVisitor {
 	public Object visitExpression_PixelSelector(
 			Expression_PixelSelector expression_PixelSelector, Object arg)
 			throws Exception {
-		Type type = (Type) symbolTable.lookupType(expression_PixelSelector.name).visit(this, arg);
-		if (type == Type.INTEGER)
+		Type type = TypeUtils.getType(symbolTable.lookupType(expression_PixelSelector.name).firstToken);
+		if (type == Type.IMAGE)
 			return Type.INTEGER;
 		else if (expression_PixelSelector.index == null)
 				return type;
@@ -249,7 +249,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 	@Override
 	public Object visitSource_Ident(Source_Ident source_Ident, Object arg)
 			throws Exception {
-		Type type = (Type) symbolTable.lookupType(source_Ident.name).visit(this, arg);
+		Type type = TypeUtils.getType(symbolTable.lookupType(source_Ident.name).firstToken);
 		if (type == Type.URL || type == Type.FILE)
 			return type;
 		else
@@ -275,7 +275,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 	@Override
 	public Object visitExpression_IntLit(Expression_IntLit expression_IntLit,
 			Object arg) throws Exception {
-		return TypeUtils.getType(expression_IntLit.firstToken);
+		return Type.INTEGER;
 		//throw new UnsupportedOperationException();
 	}
 
@@ -293,7 +293,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 	public Object visitExpression_FunctionAppWithIndexArg(
 			Expression_FunctionAppWithIndexArg expression_FunctionAppWithIndexArg,
 			Object arg) throws Exception {
-		return expression_FunctionAppWithIndexArg.arg.visit(this, arg);
+		return Type.INTEGER;
 		//throw new UnsupportedOperationException();
 	}
 
@@ -342,7 +342,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 	public Object visitStatement_Assign(Statement_Assign statement_Assign,
 			Object arg) throws Exception {
 		Type e_type = (Type) statement_Assign.e.visit(this, arg);
-		Type lhs_type = TypeUtils.getType(statement_Assign.lhs.firstToken);
+		Type lhs_type = (Type) statement_Assign.lhs.visit(this, arg);
 		if (lhs_type != e_type)
 			throw new SemanticException(statement_Assign.e.firstToken, "Return type not consistent.\n");
 		statement_Assign.setCartesian(statement_Assign.lhs.isCartesian());
@@ -352,10 +352,15 @@ public class TypeCheckVisitor implements ASTVisitor {
 
 	@Override
 	public Object visitLHS(LHS lhs, Object arg) throws Exception {
-		lhs.setDeclaration(symbolTable.lookupType(lhs.name));
-		lhs.setCartesian(lhs.index.isCartesian());
-		return TypeUtils.getType(lhs.getDeclaration().firstToken);
-		//throw new UnsupportedOperationException();
+		Declaration dec = symbolTable.lookupType(lhs.name);
+		if (dec != null) {
+			lhs.setDeclaration(dec);
+			lhs.setCartesian(lhs.index.isCartesian());
+			return TypeUtils.getType(lhs.getDeclaration().firstToken);
+		}
+		else
+			throw new SemanticException(lhs.firstToken, lhs.name + " not declared.\n");
+		//throw new UnsupportedOperationException(); 
 	}
 
 	@Override
@@ -379,14 +384,14 @@ public class TypeCheckVisitor implements ASTVisitor {
 	public Object visitExpression_BooleanLit(
 			Expression_BooleanLit expression_BooleanLit, Object arg)
 			throws Exception {
-		return TypeUtils.getType(expression_BooleanLit.firstToken);
+		return Type.BOOLEAN;
 		//throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Object visitExpression_Ident(Expression_Ident expression_Ident,
 			Object arg) throws Exception {
-		return (Type) symbolTable.lookupType(expression_Ident.name).visit(this, arg);
+		return TypeUtils.getType(symbolTable.lookupType(expression_Ident.name).firstToken);
 		//throw new UnsupportedOperationException();
 	}
 
