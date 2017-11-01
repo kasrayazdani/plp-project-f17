@@ -6,6 +6,7 @@ public class LHS extends ASTNode{
 
 	public final String name;
 	public final Index index;
+	boolean isCartesian;
 
 
 
@@ -20,6 +21,14 @@ public class LHS extends ASTNode{
 		return v.visitLHS(this,arg);
 	}
 
+	public boolean isCartesian() {
+		return isCartesian;
+	}
+	
+	public void setCartesian(boolean isCartesian) {
+		this.isCartesian = isCartesian;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

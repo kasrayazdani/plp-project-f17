@@ -4,7 +4,6 @@ import cop5556fa17.Scanner.Kind;
 import cop5556fa17.Scanner.Token;
 import cop5556fa17.TypeUtils.Type;
 
-import com.sun.org.apache.bcel.internal.generic.DCMPL;
 import java.net.URL;
 
 import cop5556fa17.AST.ASTNode;
@@ -72,13 +71,14 @@ public class TypeCheckVisitor implements ASTVisitor {
 		if (symbolTable.insert(declaration_Variable.name,declaration_Variable)) {
 			Type type = TypeUtils.getType(declaration_Variable.firstToken);
 			if (declaration_Variable.e != null) {
-				if (TypeUtils.getType(declaration_Variable.firstToken)==declaration_Variable.e.visit(this, arg))
-					return type;
+				if (TypeUtils.getType(declaration_Variable.firstToken)!=declaration_Variable.e.visit(this, arg))
+					throw new SemanticException(declaration_Variable.e.firstToken, "Type mismatch.\n");
 			}
-			else
-				return type;
+			return type;
 		}
-		throw new UnsupportedOperationException();
+		else
+			throw new SemanticException(declaration_Variable.firstToken, "Symbol already present.\n");
+		//throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -98,7 +98,18 @@ public class TypeCheckVisitor implements ASTVisitor {
 	@Override
 	public Object visitIndex(Index index, Object arg) throws Exception {
 		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		if (index.e0.visit(this, arg) == Type.INTEGER) {
+			if (index.e1.visit(this, arg) == Type.INTEGER) {
+				//return  !(index.e0.firstToken.kind == Kind.KW_r && index.e1.firstToken.kind == Kind.KW_A);
+				index.setCartesian(!(index.e0.firstToken.kind == Kind.KW_r && index.e1.firstToken.kind == Kind.KW_A));
+				return Type.NONE;
+			}
+			else
+				throw new SemanticException(index.e1.firstToken, "Return type not integer.\n");
+		}
+		else
+			throw new SemanticException(index.e0.firstToken, "Return type not integer.\n");
+		//throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -120,26 +131,24 @@ public class TypeCheckVisitor implements ASTVisitor {
 	@Override
 	public Object visitDeclaration_Image(Declaration_Image declaration_Image,
 			Object arg) throws Exception {
-		// TODO Auto-generated method stub
 		if (symbolTable.insert(declaration_Image.name, declaration_Image)) {
-			Type type;// = Type.IMAGE;
 			if (declaration_Image.xSize != null || declaration_Image.ySize != null) {
-				if (declaration_Image.xSize!=null && declaration_Image.ySize !=null &&
+				if (!(declaration_Image.xSize!=null && declaration_Image.ySize !=null &&
 						(Type) declaration_Image.xSize.visit(this, arg)==Type.INTEGER && 
-						(Type) declaration_Image.ySize.visit(this, arg)==Type.INTEGER)
-					return Type.IMAGE;
+						(Type) declaration_Image.ySize.visit(this, arg)==Type.INTEGER))
+					throw new SemanticException(declaration_Image.firstToken, "Retrun type of xSize OR ySize not integer.\n");
 			}
-			else
-				return Type.IMAGE;
+			return Type.IMAGE;
 		}
-		throw new UnsupportedOperationException();
+		else
+			throw new SemanticException(declaration_Image.firstToken, "Symbol already present.\n");
+		//throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Object visitSource_StringLiteral(
 			Source_StringLiteral source_StringLiteral, Object arg)
 			throws Exception {
-		// TODO Auto-generated method stub
 		Type type;
 		try {
 			URL url = new URL(source_StringLiteral.fileOrUrl);
@@ -178,13 +187,15 @@ public class TypeCheckVisitor implements ASTVisitor {
 	public Object visitDeclaration_SourceSink(
 			Declaration_SourceSink declaration_SourceSink, Object arg)
 			throws Exception {
-		// TODO Auto-generated method stub
 		if (symbolTable.insert(declaration_SourceSink.name,declaration_SourceSink)) {
 			Type type = (Type) declaration_SourceSink.source.visit(this, arg);
-			if (TypeUtils.getType(declaration_SourceSink.firstToken) == type)
-				return type;
+			if (TypeUtils.getType(declaration_SourceSink.firstToken) != type)
+				throw new SemanticException(declaration_SourceSink.source.firstToken, "Source rerurn type mismatch.\n");
+			return type;
 		}
-		throw new UnsupportedOperationException();
+		else
+			throw new SemanticException(declaration_SourceSink.firstToken, "Symbol already present.\n");
+		//throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -215,8 +226,8 @@ public class TypeCheckVisitor implements ASTVisitor {
 	public Object visitExpression_PredefinedName(
 			Expression_PredefinedName expression_PredefinedName, Object arg)
 			throws Exception {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		return Type.INTEGER;
+		//throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -236,8 +247,13 @@ public class TypeCheckVisitor implements ASTVisitor {
 	@Override
 	public Object visitStatement_Assign(Statement_Assign statement_Assign,
 			Object arg) throws Exception {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		Type e_type = (Type) statement_Assign.e.visit(this, arg);
+		Type lhs_type = TypeUtils.getType(statement_Assign.lhs.firstToken);
+		if (lhs_type != e_type)
+			throw new SemanticException(statement_Assign.e.firstToken, "Return type not consistent.\n");
+		statement_Assign.setCartesian(statement_Assign.lhs.isCartesian());
+		return Type.NONE;
+		//throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -249,7 +265,6 @@ public class TypeCheckVisitor implements ASTVisitor {
 	@Override
 	public Object visitSink_SCREEN(Sink_SCREEN sink_SCREEN, Object arg)
 			throws Exception {
-		// TODO Auto-generated method stub
 		return TypeUtils.getType(sink_SCREEN.firstToken);
 		//throw new UnsupportedOperationException();
 	}
@@ -267,7 +282,6 @@ public class TypeCheckVisitor implements ASTVisitor {
 	public Object visitExpression_BooleanLit(
 			Expression_BooleanLit expression_BooleanLit, Object arg)
 			throws Exception {
-		// TODO Auto-generated method stub
 		return TypeUtils.getType(expression_BooleanLit.firstToken);
 		//throw new UnsupportedOperationException();
 	}
@@ -275,7 +289,6 @@ public class TypeCheckVisitor implements ASTVisitor {
 	@Override
 	public Object visitExpression_Ident(Expression_Ident expression_Ident,
 			Object arg) throws Exception {
-		// TODO Auto-generated method stub
 		return (Type) symbolTable.lookupType(expression_Ident.name).visit(this, arg);
 		//throw new UnsupportedOperationException();
 	}
