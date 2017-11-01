@@ -1,6 +1,12 @@
 package cop5556fa17;
 
+import cop5556fa17.Scanner.Kind;
 import cop5556fa17.Scanner.Token;
+import cop5556fa17.TypeUtils.Type;
+
+import com.sun.org.apache.bcel.internal.generic.DCMPL;
+import java.net.URL;
+
 import cop5556fa17.AST.ASTNode;
 import cop5556fa17.AST.ASTVisitor;
 import cop5556fa17.AST.Declaration_Image;
@@ -31,18 +37,18 @@ import cop5556fa17.AST.Statement_Out;
 public class TypeCheckVisitor implements ASTVisitor {
 	
 
-		@SuppressWarnings("serial")
-		public static class SemanticException extends Exception {
-			Token t;
+	@SuppressWarnings("serial")
+	public static class SemanticException extends Exception {
+		Token t;
 
-			public SemanticException(Token t, String message) {
-				super("line " + t.line + " pos " + t.pos_in_line + ": "+  message);
-				this.t = t;
-			}
+		public SemanticException(Token t, String message) {
+			super("line " + t.line + " pos " + t.pos_in_line + ": "+  message);
+			this.t = t;
+		}
 
-		}		
+	}		
 		
-
+	SymbolTable symbolTable = new SymbolTable();
 	
 	/**
 	 * The program name is only used for naming the class.  It does not rule out
@@ -63,6 +69,15 @@ public class TypeCheckVisitor implements ASTVisitor {
 			Declaration_Variable declaration_Variable, Object arg)
 			throws Exception {
 		// TODO Auto-generated method stub
+		if (symbolTable.insert(declaration_Variable.name,declaration_Variable)) {
+			Type type = TypeUtils.getType(declaration_Variable.firstToken);
+			if (declaration_Variable.e != null) {
+				if (TypeUtils.getType(declaration_Variable.firstToken)==declaration_Variable.e.visit(this, arg))
+					return type;
+			}
+			else
+				return type;
+		}
 		throw new UnsupportedOperationException();
 	}
 
@@ -106,6 +121,17 @@ public class TypeCheckVisitor implements ASTVisitor {
 	public Object visitDeclaration_Image(Declaration_Image declaration_Image,
 			Object arg) throws Exception {
 		// TODO Auto-generated method stub
+		if (symbolTable.insert(declaration_Image.name, declaration_Image)) {
+			Type type;// = Type.IMAGE;
+			if (declaration_Image.xSize != null || declaration_Image.ySize != null) {
+				if (declaration_Image.xSize!=null && declaration_Image.ySize !=null &&
+						(Type) declaration_Image.xSize.visit(this, arg)==Type.INTEGER && 
+						(Type) declaration_Image.ySize.visit(this, arg)==Type.INTEGER)
+					return Type.IMAGE;
+			}
+			else
+				return Type.IMAGE;
+		}
 		throw new UnsupportedOperationException();
 	}
 
@@ -114,7 +140,16 @@ public class TypeCheckVisitor implements ASTVisitor {
 			Source_StringLiteral source_StringLiteral, Object arg)
 			throws Exception {
 		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		Type type;
+		try {
+			URL url = new URL(source_StringLiteral.fileOrUrl);
+			type = Type.URL;
+		}
+		catch (java.net.MalformedURLException e) {
+			type = Type.FILE;
+		}
+		return type;
+		//throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -122,6 +157,9 @@ public class TypeCheckVisitor implements ASTVisitor {
 			Source_CommandLineParam source_CommandLineParam, Object arg)
 			throws Exception {
 		// TODO Auto-generated method stub
+		Type type = (Type) source_CommandLineParam.visit(this, arg);
+		if (type==Type.INTEGER)
+			return type;
 		throw new UnsupportedOperationException();
 	}
 
@@ -129,6 +167,10 @@ public class TypeCheckVisitor implements ASTVisitor {
 	public Object visitSource_Ident(Source_Ident source_Ident, Object arg)
 			throws Exception {
 		// TODO Auto-generated method stub
+		Type type = (Type) symbolTable.lookupType(source_Ident.name).visit(this, arg);
+		if (type == Type.URL || type == Type.FILE) {
+			return type;
+		}
 		throw new UnsupportedOperationException();
 	}
 
@@ -137,6 +179,11 @@ public class TypeCheckVisitor implements ASTVisitor {
 			Declaration_SourceSink declaration_SourceSink, Object arg)
 			throws Exception {
 		// TODO Auto-generated method stub
+		if (symbolTable.insert(declaration_SourceSink.name,declaration_SourceSink)) {
+			Type type = (Type) declaration_SourceSink.source.visit(this, arg);
+			if (TypeUtils.getType(declaration_SourceSink.firstToken) == type)
+				return type;
+		}
 		throw new UnsupportedOperationException();
 	}
 
