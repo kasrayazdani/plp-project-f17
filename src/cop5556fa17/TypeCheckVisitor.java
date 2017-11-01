@@ -355,7 +355,8 @@ public class TypeCheckVisitor implements ASTVisitor {
 		Declaration dec = symbolTable.lookupType(lhs.name);
 		if (dec != null) {
 			lhs.setDeclaration(dec);
-			lhs.setCartesian(lhs.index.isCartesian());
+			if (lhs.index != null)
+				lhs.setCartesian(lhs.index.isCartesian());
 			return TypeUtils.getType(lhs.getDeclaration().firstToken);
 		}
 		else
@@ -366,7 +367,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 	@Override
 	public Object visitSink_SCREEN(Sink_SCREEN sink_SCREEN, Object arg)
 			throws Exception {
-		return TypeUtils.getType(sink_SCREEN.firstToken);
+		return Type.SCREEN;
 		//throw new UnsupportedOperationException();
 	}
 
@@ -391,6 +392,8 @@ public class TypeCheckVisitor implements ASTVisitor {
 	@Override
 	public Object visitExpression_Ident(Expression_Ident expression_Ident,
 			Object arg) throws Exception {
+		if (symbolTable.lookupType(expression_Ident.name)==null) 
+			throw new SemanticException(expression_Ident.firstToken, expression_Ident.name + " not declared.\n");
 		return TypeUtils.getType(symbolTable.lookupType(expression_Ident.name).firstToken);
 		//throw new UnsupportedOperationException();
 	}
