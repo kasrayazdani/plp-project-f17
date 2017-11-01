@@ -86,6 +86,23 @@ public class TypeCheckTest {
 		show("AST for program " + name);
 		show(ast);
 	}
+	
+	@Test
+	public void dec_ss1() throws Exception {
+		String input = "prog url facebook = \"http://www.facebook.com\";"
+				     + "file exec = \"/usr/share/bin/passwd\";"; 
+		show(input); // Display the input
+		Scanner scanner = new Scanner(input).scan(); // Create a Scanner and
+														// initialize it
+		show(scanner); // Display the Scanner
+		Parser parser = new Parser(scanner); // Create a parser
+		ASTNode ast = parser.parse(); // Parse the program
+		TypeCheckVisitor v = new TypeCheckVisitor();
+		String name = (String) ast.visit(v, null);
+		show("AST for program " + name);
+		show(ast);
+		assertEquals(name,"prog");
+	}
 
 
 
