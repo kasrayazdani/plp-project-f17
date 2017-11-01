@@ -219,7 +219,6 @@ public class TypeCheckVisitor implements ASTVisitor {
 	@Override
 	public Object visitExpression_IntLit(Expression_IntLit expression_IntLit,
 			Object arg) throws Exception {
-		// TODO Auto-generated method stub
 		return TypeUtils.getType(expression_IntLit.firstToken);
 		//throw new UnsupportedOperationException();
 	}
@@ -244,7 +243,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 	public Object visitExpression_PredefinedName(
 			Expression_PredefinedName expression_PredefinedName, Object arg)
 			throws Exception {
-		return Type.INTEGER;
+		return TypeUtils.getType(expression_PredefinedName.firstToken);
 		//throw new UnsupportedOperationException();
 	}
 
@@ -309,7 +308,6 @@ public class TypeCheckVisitor implements ASTVisitor {
 	@Override
 	public Object visitSink_Ident(Sink_Ident sink_Ident, Object arg)
 			throws Exception {
-		// TODO Auto-generated method stub
 		if (symbolTable.lookupType(sink_Ident.name).visit(this, arg) == Type.FILE)
 			return Type.FILE;
 		throw new UnsupportedOperationException();
