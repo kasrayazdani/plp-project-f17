@@ -70,7 +70,6 @@ public class TypeCheckVisitor implements ASTVisitor {
 	public Object visitDeclaration_Variable(
 			Declaration_Variable declaration_Variable, Object arg)
 			throws Exception {
-		// TODO Auto-generated method stub
 		if (symbolTable.insert(declaration_Variable.name,declaration_Variable)) {
 			Type type = TypeUtils.getType(declaration_Variable.firstToken);
 			if (declaration_Variable.e != null) {
@@ -87,8 +86,50 @@ public class TypeCheckVisitor implements ASTVisitor {
 	@Override
 	public Object visitExpression_Binary(Expression_Binary expression_Binary,
 			Object arg) throws Exception {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		Type type = null;
+		Type e0_type = (Type) expression_Binary.e0.visit(this, arg);
+		Type e1_type = (Type) expression_Binary.e1.visit(this, arg);
+		if (e0_type != e1_type)
+			throw new SemanticException(expression_Binary.firstToken, "Return type of e0 and e1 not same");
+		switch (expression_Binary.op) {
+		case OP_EQ:
+		case OP_NEQ:
+			type = Type.BOOLEAN;
+			break;
+			
+		case OP_GE:
+		case OP_GT:
+		case OP_LT:
+		case OP_LE:
+			if (e0_type == Type.INTEGER)
+				type = Type.BOOLEAN;
+			break;
+			
+		case OP_AND:
+		case OP_OR:
+			if (e0_type == Type.INTEGER || e0_type == Type.BOOLEAN)
+				type = e0_type;
+			break;
+			
+		case OP_DIV:
+		case OP_MINUS:
+		case OP_MOD:
+		case OP_PLUS:
+		case OP_POWER:
+		case OP_TIMES:
+			if (e0_type == Type.INTEGER)
+				type = Type.INTEGER;
+			break;
+		
+		default:
+			type = null;
+			break;
+		}
+		if (type != null)
+			return type;
+		else
+			throw new SemanticException(expression_Binary.firstToken, "Return type null.\n");
+		//throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -134,16 +175,31 @@ public class TypeCheckVisitor implements ASTVisitor {
 	public Object visitExpression_PixelSelector(
 			Expression_PixelSelector expression_PixelSelector, Object arg)
 			throws Exception {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		Type type = (Type) symbolTable.lookupType(expression_PixelSelector.name).visit(this, arg);
+		if (type == Type.INTEGER)
+			return Type.INTEGER;
+		else if (expression_PixelSelector.index == null)
+				return type;
+		else
+			throw new SemanticException(expression_PixelSelector.index.firstToken, "Index not null.\n");	
+		//throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Object visitExpression_Conditional(
 			Expression_Conditional expression_Conditional, Object arg)
 			throws Exception {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		Type cond_type = (Type) expression_Conditional.condition.visit(this, arg);
+		if (cond_type == Type.BOOLEAN) {
+			Type type = (Type) expression_Conditional.trueExpression.visit(this, arg); 
+			if (type == expression_Conditional.falseExpression.visit(this, arg))
+				return type;
+			else
+				throw new SemanticException(expression_Conditional.falseExpression.firstToken, "Return type not same as trueExpression.\n");
+		}
+		else
+			throw new SemanticException(expression_Conditional.condition.firstToken, "Return type not bool.\n");
+		//throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -183,22 +239,22 @@ public class TypeCheckVisitor implements ASTVisitor {
 	public Object visitSource_CommandLineParam(
 			Source_CommandLineParam source_CommandLineParam, Object arg)
 			throws Exception {
-		// TODO Auto-generated method stub
-		Type type = (Type) source_CommandLineParam.visit(this, arg);
-		if (type==Type.INTEGER)
-			return type;
-		throw new UnsupportedOperationException();
+		if ((Type) source_CommandLineParam.paramNum.visit(this, arg) == Type.INTEGER)
+			return Type.INTEGER;
+		else
+			throw new SemanticException(source_CommandLineParam.firstToken, "Return type not integer.\n");
+		//throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Object visitSource_Ident(Source_Ident source_Ident, Object arg)
 			throws Exception {
-		// TODO Auto-generated method stub
 		Type type = (Type) symbolTable.lookupType(source_Ident.name).visit(this, arg);
-		if (type == Type.URL || type == Type.FILE) {
+		if (type == Type.URL || type == Type.FILE)
 			return type;
-		}
-		throw new UnsupportedOperationException();
+		else
+			throw new SemanticException(source_Ident.firstToken, "Return type not url or file.\n");
+		//throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -227,16 +283,18 @@ public class TypeCheckVisitor implements ASTVisitor {
 	public Object visitExpression_FunctionAppWithExprArg(
 			Expression_FunctionAppWithExprArg expression_FunctionAppWithExprArg,
 			Object arg) throws Exception {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		if (!(expression_FunctionAppWithExprArg.arg.visit(this, arg) == Type.INTEGER))
+			throw new SemanticException(expression_FunctionAppWithExprArg.firstToken, "Return type not integer");
+		return Type.INTEGER;
+		//throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Object visitExpression_FunctionAppWithIndexArg(
 			Expression_FunctionAppWithIndexArg expression_FunctionAppWithIndexArg,
 			Object arg) throws Exception {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		return expression_FunctionAppWithIndexArg.arg.visit(this, arg);
+		//throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -294,8 +352,10 @@ public class TypeCheckVisitor implements ASTVisitor {
 
 	@Override
 	public Object visitLHS(LHS lhs, Object arg) throws Exception {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		lhs.setDeclaration(symbolTable.lookupType(lhs.name));
+		lhs.setCartesian(lhs.index.isCartesian());
+		return TypeUtils.getType(lhs.getDeclaration().firstToken);
+		//throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -310,7 +370,9 @@ public class TypeCheckVisitor implements ASTVisitor {
 			throws Exception {
 		if (symbolTable.lookupType(sink_Ident.name).visit(this, arg) == Type.FILE)
 			return Type.FILE;
-		throw new UnsupportedOperationException();
+		else
+			throw new SemanticException(sink_Ident.firstToken, "Return type not file.\n");
+		//throw new UnsupportedOperationException();
 	}
 
 	@Override

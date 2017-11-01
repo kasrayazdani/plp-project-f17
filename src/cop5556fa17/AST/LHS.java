@@ -6,6 +6,7 @@ public class LHS extends ASTNode{
 
 	public final String name;
 	public final Index index;
+	Declaration dec;
 	boolean isCartesian;
 
 
@@ -29,6 +30,13 @@ public class LHS extends ASTNode{
 		this.isCartesian = isCartesian;
 	}
 	
+	public void setDeclaration(Declaration dec) {
+		this.dec = dec;
+	}
+	
+	public Declaration getDeclaration() {
+		return this.dec;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -70,6 +78,7 @@ public class LHS extends ASTNode{
 		builder.append("]");
 		return builder.toString();
 	}
+
 
 
 	
