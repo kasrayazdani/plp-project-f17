@@ -264,14 +264,16 @@ public class TypeCheckVisitor implements ASTVisitor {
 			Expression_BooleanLit expression_BooleanLit, Object arg)
 			throws Exception {
 		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		return TypeUtils.getType(expression_BooleanLit.firstToken);
+		//throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Object visitExpression_Ident(Expression_Ident expression_Ident,
 			Object arg) throws Exception {
 		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		return (Type) symbolTable.lookupType(expression_Ident.name).visit(this, arg);
+		//throw new UnsupportedOperationException();
 	}
 
 }
