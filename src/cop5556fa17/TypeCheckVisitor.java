@@ -5,9 +5,12 @@ import cop5556fa17.Scanner.Token;
 import cop5556fa17.TypeUtils.Type;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import cop5556fa17.AST.ASTNode;
 import cop5556fa17.AST.ASTVisitor;
+import cop5556fa17.AST.Declaration;
 import cop5556fa17.AST.Declaration_Image;
 import cop5556fa17.AST.Declaration_SourceSink;
 import cop5556fa17.AST.Declaration_Variable;
@@ -91,16 +94,31 @@ public class TypeCheckVisitor implements ASTVisitor {
 	@Override
 	public Object visitExpression_Unary(Expression_Unary expression_Unary,
 			Object arg) throws Exception {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		if (Arrays.asList(Kind.OP_EXCL,Kind.OP_PLUS,Kind.OP_MINUS).contains(expression_Unary.op)) {
+			Type type = (Type) expression_Unary.e.visit(this, arg);
+			switch(expression_Unary.op) {
+			case OP_EXCL:
+				if (!(type == Type.BOOLEAN || type == Type.INTEGER))
+					throw new SemanticException(expression_Unary.e.firstToken, "Return type not integer or bool.\n");
+				break;
+				
+			case OP_PLUS:
+			case OP_MINUS:
+				if (!(type==Type.INTEGER))
+					throw new SemanticException(expression_Unary.e.firstToken, "Return type not integer.\n");
+				break;				
+			}
+			return type;
+		}
+		else
+			throw new SemanticException(expression_Unary.firstToken, "Unidentified unary op.\n");
+		//throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Object visitIndex(Index index, Object arg) throws Exception {
-		// TODO Auto-generated method stub
 		if (index.e0.visit(this, arg) == Type.INTEGER) {
 			if (index.e1.visit(this, arg) == Type.INTEGER) {
-				//return  !(index.e0.firstToken.kind == Kind.KW_r && index.e1.firstToken.kind == Kind.KW_A);
 				index.setCartesian(!(index.e0.firstToken.kind == Kind.KW_r && index.e1.firstToken.kind == Kind.KW_A));
 				return Type.NONE;
 			}
@@ -233,15 +251,34 @@ public class TypeCheckVisitor implements ASTVisitor {
 	@Override
 	public Object visitStatement_Out(Statement_Out statement_Out, Object arg)
 			throws Exception {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		Declaration dec = symbolTable.lookupType(statement_Out.name);
+		if (dec != null) {
+			statement_Out.setDec(dec);
+			Type dec_type =  TypeUtils.getType(statement_Out.getDec().firstToken);
+			Type sink_type = (Type) statement_Out.sink.visit(this, arg);
+			if (!(((dec_type == Type.INTEGER || dec_type == Type.BOOLEAN) && sink_type == Type.SCREEN) || 
+					(dec_type == Type.IMAGE && (sink_type == Type.FILE || sink_type == Type.SCREEN))))
+				throw new SemanticException(statement_Out.sink.firstToken, "Return type not consistent.\n");
+			return Type.NONE;
+		}
+		else
+			throw new SemanticException(statement_Out.firstToken, "Invalid Statement_Out.\n");
+		//throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Object visitStatement_In(Statement_In statement_In, Object arg)
 			throws Exception {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		Declaration dec = symbolTable.lookupType(statement_In.name);
+		if (dec != null) {
+			statement_In.setDec(dec);
+			if (TypeUtils.getType(statement_In.getDec().firstToken) != statement_In.source.visit(this, arg))
+				throw new SemanticException(statement_In.source.firstToken, "Return type not consistent.\n");
+			return Type.NONE;
+		}
+		else
+			throw new SemanticException(statement_In.firstToken, "Invalid Statement_In.\n");
+		//throw new UnsupportedOperationException();
 	}
 
 	@Override
