@@ -91,17 +91,14 @@ public class TypeCheckTest {
 	public void dec_ss1() throws Exception {
 		String input = "prog url facebook = \"http://www.facebook.com\";"
 				     + "file exec = \"/usr/share/bin/passwd\";"; 
-		show(input); // Display the input
-		Scanner scanner = new Scanner(input).scan(); // Create a Scanner and
-														// initialize it
-		show(scanner); // Display the Scanner
-		Parser parser = new Parser(scanner); // Create a parser
-		ASTNode ast = parser.parse(); // Parse the program
-		TypeCheckVisitor v = new TypeCheckVisitor();
-		String name = (String) ast.visit(v, null);
-		show("AST for program " + name);
-		show(ast);
-		assertEquals(name,"prog");
+		typeCheck(input);
+	}
+	
+	@Test
+	public void dec_image() throws Exception {
+		String input = "prog image[40,40] in_img <- \"/home/test.jpg\";\n"
+				     + "image in_img2; in_img2 <- in_img;";
+		typeCheck(input);
 	}
 
 
@@ -128,6 +125,4 @@ public class TypeCheckTest {
 	 thrown.expect(SemanticException.class);
 	 typeCheck(input);
 	 }
-
-
 }
