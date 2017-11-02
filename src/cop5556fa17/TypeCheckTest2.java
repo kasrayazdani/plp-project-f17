@@ -144,7 +144,9 @@ public class TypeCheckTest2 {
 
 	@Test
 	public void test12() throws Exception {
-		String input = "prog int x_y=12; image [10,11] abcd <- x_y;"; 
+		String input = "prog int x_y=12; \n"
+				     + "image [10,11] abcd <- x_y;"; 
+		thrown.expect(SemanticException.class);
 		typeCheck(input);
 	}
 

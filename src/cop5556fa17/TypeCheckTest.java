@@ -88,31 +88,95 @@ public class TypeCheckTest {
 	}
 	
 	@Test
-	public void dec_ss1() throws Exception {
+	public void test1() throws Exception {
 		String input = "prog url facebook = \"http://www.facebook.com\";"
 				     + "file exec = \"/usr/share/bin/passwd\";"; 
+		typeCheck(input);
+		
+		input = "prog url facebook = facebook;";
+		thrown.expect(SemanticException.class);
 		typeCheck(input);
 	}
 	
 	@Test
-	public void dec_image() throws Exception {
+	public void test2() throws Exception {
 		String input = "prog image[40,40] in_img <- \"/home/test.jpg\";\n"
-				     + "image in_img2; in_img2 <- in_img;";
+				     + "file path =  \"/home/test2.jpg\";\n"
+				     + "image in_img2 <- path;";
 		typeCheck(input);
 	}
 
+	@Test
+	public void test3() throws Exception {
+		String input = "prog int height = 10; int width = 10; int junk = (height>=width) ? height : width;";
+		typeCheck(input);
+	}
 
-
+	@Test
+	public void test4() throws Exception {
+		String input = "prog boolean go4kill; boolean alive = true; \n"
+				     + "int for = 10; int against = 11; go4kill = (for > against) ? true : false; \n"
+				     + "boolean success = go4kill & alive;";
+		typeCheck(input);
+		
+		input = "prog boolean go4kill; int for = 10; "
+			  + "int against = 11; kill = (for > against) ? true : false; "
+			  + "boolean success = go4Kill & alive;";
+		thrown.expect(SemanticException.class);
+		typeCheck(input);
+	}
+	
+	@Test
+	public void test5() throws Exception {
+		String input = "prog int area;\n"
+				      + "int height = 50;\n"
+				      + "int base = 120;\n"
+				      + "area = base*height;\n"
+				      + "int angle = cos(120/50);\n"
+				      + "boolean isRight = angle==0 ? true : false;";
+		typeCheck(input);
+		
+		input = "prog image [ A*R/Z-DEF_Y , (x++y) ] img2 <- \"img2\";\n";
+		typeCheck(input);
+		
+		input = "prog image [ A*R/Z+DEF_X-DEF_Y , (x==y) ] img2 <- xx;\n";
+		thrown.expect(SemanticException.class);
+		typeCheck(input);
+	}
+	
+	@Test
+	public void test6() throws Exception {
+		String input = "prog image output <- \"img2show\";\n"
+				     + "output -> SCREEN;\n";
+		typeCheck(input);
+		
+		input = "prog image assign_var <- @ 2++-3;\n"
+			  + "image img2 <- \"junk\";\n"
+			  + "assign_var = img2;";
+		typeCheck(input);
+	}
+	
+	@Test
+	public void test7() throws Exception {
+		String input = "prog image junk <- junk;";
+		thrown.expect(SemanticException.class);
+		typeCheck(input);
+	}
+	
 	
 	/**
 	 * This test should pass with a fully implemented assignment
 	 * @throws Exception
 	 */
-	 @Test
-	 public void testDec1() throws Exception {
-	 String input = "prog int k = 42;";
-	 typeCheck(input);
-	 }
+	@Test
+	public void testDec1() throws Exception {
+		String input = "prog int k = 42;";
+		typeCheck(input);
+
+		input = "prog int k = k + 1;";
+		thrown.expect(SemanticException.class);
+		typeCheck(input);
+	}
 	 
 	 /**
 	  * This program does not declare k. The TypeCheckVisitor should

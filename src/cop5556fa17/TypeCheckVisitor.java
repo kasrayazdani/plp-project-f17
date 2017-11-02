@@ -8,6 +8,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
+
 import cop5556fa17.AST.ASTNode;
 import cop5556fa17.AST.ASTVisitor;
 import cop5556fa17.AST.Declaration;
@@ -70,12 +72,13 @@ public class TypeCheckVisitor implements ASTVisitor {
 	public Object visitDeclaration_Variable(
 			Declaration_Variable declaration_Variable, Object arg)
 			throws Exception {
-		if (symbolTable.insert(declaration_Variable.name,declaration_Variable)) {
+		if (symbolTable.lookupType(declaration_Variable.name)==null) {
 			Type type = TypeUtils.getType(declaration_Variable.firstToken);
 			if (declaration_Variable.e != null) {
 				if (TypeUtils.getType(declaration_Variable.firstToken)!=declaration_Variable.e.visit(this, arg))
 					throw new SemanticException(declaration_Variable.e.firstToken, "Type mismatch.\n");
 			}
+			symbolTable.insert(declaration_Variable.name, declaration_Variable);
 			return type;
 		}
 		else
@@ -205,7 +208,13 @@ public class TypeCheckVisitor implements ASTVisitor {
 	@Override
 	public Object visitDeclaration_Image(Declaration_Image declaration_Image,
 			Object arg) throws Exception {
-		if (symbolTable.insert(declaration_Image.name, declaration_Image)) {
+		if (symbolTable.lookupType(declaration_Image.name) == null) {
+			Type source_type;
+			if (declaration_Image.source != null)
+				source_type = (Type) declaration_Image.source.visit(this, arg);
+			
+			symbolTable.insert(declaration_Image.name, declaration_Image);
+			
 			if (declaration_Image.xSize != null || declaration_Image.ySize != null) {
 				if (!(declaration_Image.xSize!=null && declaration_Image.ySize !=null &&
 						(Type) declaration_Image.xSize.visit(this, arg)==Type.INTEGER && 
@@ -249,6 +258,8 @@ public class TypeCheckVisitor implements ASTVisitor {
 	@Override
 	public Object visitSource_Ident(Source_Ident source_Ident, Object arg)
 			throws Exception {
+		if (symbolTable.lookupType(source_Ident.name)==null)
+			throw new SemanticException(source_Ident.firstToken, source_Ident.name + " not declared.\n");
 		Type type = TypeUtils.getType(symbolTable.lookupType(source_Ident.name).firstToken);
 		if (type == Type.URL || type == Type.FILE)
 			return type;
@@ -261,10 +272,11 @@ public class TypeCheckVisitor implements ASTVisitor {
 	public Object visitDeclaration_SourceSink(
 			Declaration_SourceSink declaration_SourceSink, Object arg)
 			throws Exception {
-		if (symbolTable.insert(declaration_SourceSink.name,declaration_SourceSink)) {
+		if (symbolTable.lookupType(declaration_SourceSink.name) == null) {
 			Type type = (Type) declaration_SourceSink.source.visit(this, arg);
 			if (TypeUtils.getType(declaration_SourceSink.firstToken) != type)
 				throw new SemanticException(declaration_SourceSink.source.firstToken, "Source rerurn type mismatch.\n");
+			symbolTable.insert(declaration_SourceSink.name,declaration_SourceSink);
 			return type;
 		}
 		else
@@ -301,7 +313,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 	public Object visitExpression_PredefinedName(
 			Expression_PredefinedName expression_PredefinedName, Object arg)
 			throws Exception {
-		return TypeUtils.getType(expression_PredefinedName.firstToken);
+		return Type.INTEGER;
 		//throw new UnsupportedOperationException();
 	}
 
@@ -357,6 +369,8 @@ public class TypeCheckVisitor implements ASTVisitor {
 			lhs.setDeclaration(dec);
 			if (lhs.index != null)
 				lhs.setCartesian(lhs.index.isCartesian());
+			else
+				lhs.setCartesian(false);
 			return TypeUtils.getType(lhs.getDeclaration().firstToken);
 		}
 		else

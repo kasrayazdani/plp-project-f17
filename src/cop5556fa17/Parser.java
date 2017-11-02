@@ -270,7 +270,7 @@ public class Parser {
 			e0 = new Expression_PredefinedName(ft, kind);
 			match(COMMA);
 			ft = t; kind = t.kind;
-			match(KW_A);
+			match(KW_a);
 			e1 = new Expression_PredefinedName(ft, kind);
 			break;
 		default:
