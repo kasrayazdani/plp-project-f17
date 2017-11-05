@@ -163,6 +163,14 @@ public class TypeCheckTest {
 		typeCheck(input);
 	}
 	
+	@Test
+	public void testStmtOut() throws Exception {
+		String input = "prog file s = \"some source\";\n"
+				     + "image i;\n"
+				     + "i -> s;";
+		typeCheck(input);
+	}
+	
 	
 	/**
 	 * This test should pass with a fully implemented assignment

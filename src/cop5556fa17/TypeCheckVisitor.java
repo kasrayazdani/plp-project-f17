@@ -386,7 +386,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 	@Override
 	public Object visitSink_Ident(Sink_Ident sink_Ident, Object arg)
 			throws Exception {
-		if (symbolTable.lookupType(sink_Ident.name).visit(this, arg) == Type.FILE)
+		if (TypeUtils.getType(symbolTable.lookupType(sink_Ident.name).firstToken) == Type.FILE)
 			return Type.FILE;
 		else
 			throw new SemanticException(sink_Ident.firstToken, "Return type not file.\n");
