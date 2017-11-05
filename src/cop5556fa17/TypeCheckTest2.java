@@ -208,7 +208,7 @@ public class TypeCheckTest2 {
 
 	@Test
 	public void test21() throws Exception {
-		String input = "prog image imageName;int array;array[[r,A]]=imageName[5,6];";
+		String input = "prog image imageName;int array;array[[r,a]]=imageName[5,6];";
 		typeCheck(input);
 	}
 
