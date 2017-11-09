@@ -38,8 +38,8 @@ import cop5556fa17.AST.Source_StringLiteral;
 import cop5556fa17.AST.Statement_In;
 import cop5556fa17.AST.Statement_Out;
 import cop5556fa17.AST.Statement_Assign;
-import cop5556fa17.image.ImageFrame;
-import cop5556fa17.image.ImageSupport;
+//import cop5556fa17.image.ImageFrame;
+//import cop5556fa17.image.ImageSupport;
 
 public class CodeGenVisitor implements ASTVisitor, Opcodes {
 
@@ -276,9 +276,9 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 	 * In HW5, only handle INTEGER and BOOLEAN types.
 	 */
 	@Override
-	public Object visitStatement_Transform(Statement_Assign statement_Assign, Object arg) throws Exception {
-		//TODO  (see comment)
-		throw new UnsupportedOperationException();
+	public Object visitStatement_Assign(Statement_Assign statement_Assign, Object arg) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/**
@@ -319,5 +319,6 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 //		CodeGenUtils.genLogTOS(GRADE, mv, expression_Ident.getType());
 //		return null;
 	}
+
 
 }
