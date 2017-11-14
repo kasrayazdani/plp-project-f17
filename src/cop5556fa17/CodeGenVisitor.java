@@ -10,6 +10,8 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import com.sun.org.glassfish.external.arc.Stability;
+
 import cop5556fa17.Scanner.Kind;
 import cop5556fa17.TypeUtils.Type;
 import cop5556fa17.AST.ASTNode;
@@ -272,6 +274,11 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 	public Object visitStatement_Out(Statement_Out statement_Out, Object arg) throws Exception {
 		// TODO in HW5:  only INTEGER and BOOLEAN
 		// TODO HW6 remaining cases
+		Type dec_type = TypeUtils.getType(statement_Out.getDec().firstToken);
+		if (dec_type == Type.BOOLEAN || dec_type == Type.INTEGER) {
+			CodeGenUtils.genLogTOS(GRADE, mv, dec_type);
+			return null;
+		}
 		throw new UnsupportedOperationException();
 	}
 
