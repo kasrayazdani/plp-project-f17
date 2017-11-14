@@ -2,12 +2,15 @@ package cop5556fa17;
 
 import java.util.ArrayList;
 
+import javax.activation.FileDataSource;
+
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import cop5556fa17.Scanner.Kind;
 import cop5556fa17.TypeUtils.Type;
 import cop5556fa17.AST.ASTNode;
 import cop5556fa17.AST.ASTVisitor;
@@ -69,6 +72,7 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 	String sourceFileName;
 
 	MethodVisitor mv; // visitor of method currently under construction
+	FieldVisitor fv;
 
 	/** Indicates whether genPrint and genPrintTOS should generate code. */
 	final boolean DEVEL;
@@ -134,9 +138,27 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 	}
 
 	@Override
-	public Object visitDeclaration_Variable(Declaration_Variable declaration_Variable, Object arg) throws Exception {
-		// TODO 
-		throw new UnsupportedOperationException();
+	public Object visitDeclaration_Variable(
+			Declaration_Variable declaration_Variable, Object arg) 
+			throws Exception {
+		// TODO
+		String fieldName = declaration_Variable.name;
+		String fieldType;
+		if (declaration_Variable.firstToken.kind == Kind.KW_boolean)
+			fieldType = "Z";
+		else
+			fieldType = "I";
+		Object initValue = null;
+		if (declaration_Variable.e != null) {
+			if (fieldType.equals("Z"))
+				initValue = new Integer((int) declaration_Variable.e.visit(this, arg));
+			else
+				initValue = new Boolean((boolean) declaration_Variable.e.visit(this, arg));
+		}
+		fv = cw.visitField(ACC_STATIC, fieldName, fieldType, null, initValue);
+		fv.visitEnd();
+		return null;
+		//throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -219,10 +241,11 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 
 	@Override
 	public Object visitExpression_IntLit(Expression_IntLit expression_IntLit, Object arg) throws Exception {
-		// TODO 
-		throw new UnsupportedOperationException();
-//		CodeGenUtils.genLogTOS(GRADE, mv, Type.INTEGER);
-//		return null;
+		// TODO
+		mv.visitLdcInsn(expression_IntLit.value);
+		//throw new UnsupportedOperationException();
+		CodeGenUtils.genLogTOS(GRADE, mv, Type.INTEGER);
+		return null;
 	}
 
 	@Override
@@ -278,6 +301,10 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 	@Override
 	public Object visitStatement_Assign(Statement_Assign statement_Assign, Object arg) throws Exception {
 		// TODO Auto-generated method stub
+		statement_Assign.e.visit(this, arg);
+		statement_Assign.lhs.visit(this, arg);
+		statement_Assign.setCartesian(statement_Assign.lhs.isCartesian());
+		//throw new UnsupportedOperationException();
 		return null;
 	}
 
@@ -287,6 +314,13 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 	@Override
 	public Object visitLHS(LHS lhs, Object arg) throws Exception {
 		//TODO  (see comment)
+		Type type = TypeUtils.getType(lhs.getDeclaration().firstToken);
+		if (type == Type.INTEGER || type == Type.BOOLEAN) {
+			mv.visitInsn(DUP);
+			String intORbool = type==Type.INTEGER ? "I" : "Z";
+			mv.visitFieldInsn(PUTSTATIC, className, lhs.name, intORbool);
+			return null;
+		}
 		throw new UnsupportedOperationException();
 	}
 	
