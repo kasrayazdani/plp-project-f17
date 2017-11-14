@@ -143,20 +143,16 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 			throws Exception {
 		// TODO
 		String fieldName = declaration_Variable.name;
-		String fieldType;
-		if (declaration_Variable.firstToken.kind == Kind.KW_boolean)
-			fieldType = "Z";
-		else
-			fieldType = "I";
-		Object initValue = null;
-		if (declaration_Variable.e != null) {
-			if (fieldType.equals("Z"))
-				initValue = new Integer((int) declaration_Variable.e.visit(this, arg));
-			else
-				initValue = new Boolean((boolean) declaration_Variable.e.visit(this, arg));
-		}
-		fv = cw.visitField(ACC_STATIC, fieldName, fieldType, null, initValue);
+		String fieldType = (declaration_Variable.firstToken.kind == Kind.KW_boolean) ? "Z" : "I";
+		fv = cw.visitField(ACC_STATIC, fieldName, fieldType, null, null);
 		fv.visitEnd();
+
+		if (declaration_Variable.e != null) {
+			declaration_Variable.e.visit(this, arg);
+			mv.visitInsn(DUP);
+			mv.visitFieldInsn(PUTSTATIC, className, declaration_Variable.name, fieldType);
+		}
+		
 		return null;
 		//throw new UnsupportedOperationException();
 	}
@@ -340,9 +336,10 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 	@Override
 	public Object visitExpression_BooleanLit(Expression_BooleanLit expression_BooleanLit, Object arg) throws Exception {
 		//TODO
-		throw new UnsupportedOperationException();
-//		CodeGenUtils.genLogTOS(GRADE, mv, Type.BOOLEAN);
-//		return null;
+		mv.visitLdcInsn(expression_BooleanLit.value);
+		//throw new UnsupportedOperationException();
+		CodeGenUtils.genLogTOS(GRADE, mv, Type.BOOLEAN);
+		return null;
 	}
 
 	@Override

@@ -105,12 +105,16 @@ public class CodeGenVisitorTest {
 	@Test
 	public void prog0() throws Exception {
 		String prog = "prog0";
-		String input = prog + " int g;\ng = 3;";//\ng -> SCREEN; ";	
+		String input = prog + " int g;\n"
+				            + " g = 3;\n"
+				            + " boolean h;\n"
+				            + " h = true;\n"
+				            + " int i = 4;";	
 		byte[] bytecode = genCode(input);		
 		String[] commandLineArgs = {}; //create command line argument array to initialize params, none in this case		
 		runCode(prog, bytecode, commandLineArgs);	
 		show("Log:\n"+RuntimeLog.globalLog);
-		assertEquals("entering main;3;leaving main;",RuntimeLog.globalLog.toString());
+		assertEquals("entering main;3;true;4;leaving main;",RuntimeLog.globalLog.toString());
 
 	}
 	
