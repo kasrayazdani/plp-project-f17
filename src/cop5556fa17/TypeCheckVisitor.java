@@ -193,8 +193,10 @@ public class TypeCheckVisitor implements ASTVisitor {
 		Type cond_type = (Type) expression_Conditional.condition.visit(this, arg);
 		if (cond_type == Type.BOOLEAN) {
 			Type type = (Type) expression_Conditional.trueExpression.visit(this, arg); 
-			if (type == expression_Conditional.falseExpression.visit(this, arg))
+			if (type == expression_Conditional.falseExpression.visit(this, arg)) {
+				expression_Conditional.setType(type);
 				return type;
+			}
 			else
 				throw new SemanticException(expression_Conditional.falseExpression.firstToken, "Return type not same as trueExpression.\n");
 		}

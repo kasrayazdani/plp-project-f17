@@ -1,12 +1,14 @@
 package cop5556fa17.AST;
 
 import cop5556fa17.Scanner.Token;
+import cop5556fa17.TypeUtils.Type;
 
 public class Expression_Conditional extends Expression {
 	
 	public final Expression condition;
 	public final Expression trueExpression;
 	public final Expression falseExpression;
+	public Type type = null;
 
 	public Expression_Conditional(Token firstToken, Expression condition, Expression trueExpression,
 			Expression falseExpression) {
@@ -19,6 +21,14 @@ public class Expression_Conditional extends Expression {
 	@Override
 	public Object visit(ASTVisitor v, Object arg) throws Exception {
 		return v.visitExpression_Conditional(this,arg);
+	}
+	
+	public void setType(Type type) {
+		this.type = type;
+	}
+	
+	public Type getType() {
+		return this.type;
 	}
 
 
