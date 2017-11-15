@@ -2,15 +2,11 @@ package cop5556fa17;
 
 import java.util.ArrayList;
 
-import javax.activation.FileDataSource;
-
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-
-import com.sun.org.glassfish.external.arc.Stability;
 
 import cop5556fa17.Scanner.Kind;
 import cop5556fa17.TypeUtils.Type;
@@ -161,10 +157,104 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 
 	@Override
 	public Object visitExpression_Binary(Expression_Binary expression_Binary, Object arg) throws Exception {
-		// TODO 
-		throw new UnsupportedOperationException();
-//		CodeGenUtils.genLogTOS(GRADE, mv, expression_Binary.getType());
-//		return null;
+		// TODO
+		Type expression_Binary_type = null;
+		switch (expression_Binary.op) {
+		
+		case OP_EQ:
+		case OP_NEQ:
+		case OP_GT:
+		case OP_GE:
+		case OP_LT:
+		case OP_LE:
+		case OP_AND:
+		case OP_OR: {
+			expression_Binary_type = Type.BOOLEAN;
+			Label startLabel = new Label();
+			Label endLabel = new Label();
+			expression_Binary.e0.visit(this, arg);
+			expression_Binary.e1.visit(this, arg);
+			switch (expression_Binary.op) {
+			
+			case OP_AND:
+				mv.visitInsn(IAND);
+				break;
+				
+			case OP_OR:
+				mv.visitInsn(IOR);
+				break;
+				
+			case OP_EQ:
+			case OP_NEQ:
+			case OP_GT:
+			case OP_GE:
+			case OP_LT:
+			case OP_LE: {
+				int op = 0;
+				switch (expression_Binary.op) {
+				case OP_EQ: op = IF_ICMPEQ;
+					break;
+				case OP_NEQ: op = IF_ICMPNE;
+					break;
+				case OP_GT: op = IF_ICMPGT;
+					break;
+				case OP_GE: op = IF_ICMPGE;
+					break;
+				case OP_LT : op = IF_ICMPLT;
+					break;
+				case OP_LE : op = IF_ICMPLE;
+					break;
+				default:
+					break;
+				}
+				mv.visitJumpInsn(op, startLabel);
+				mv.visitInsn(ICONST_0);
+				mv.visitJumpInsn(GOTO, endLabel);
+				mv.visitLabel(startLabel);
+				mv.visitInsn(ICONST_1);
+				mv.visitLabel(endLabel);
+			}break;
+				
+			default:
+				break;
+				
+			}
+		}break;
+		
+		case OP_PLUS:
+		case OP_MINUS:
+		case OP_TIMES:
+		case OP_DIV:
+		case OP_MOD: {
+			expression_Binary_type = Type.INTEGER;
+			expression_Binary.e0.visit(this, arg);
+			expression_Binary.e1.visit(this, arg);
+			switch (expression_Binary.op) {
+			case OP_PLUS: mv.visitInsn(IADD);
+				break;
+			case OP_MINUS: mv.visitInsn(ISUB);
+				break;
+			case OP_TIMES: mv.visitInsn(IMUL);
+				break;
+			case OP_DIV: mv.visitInsn(IDIV);
+				break;
+			case OP_MOD: mv.visitInsn(IREM);
+			default:
+				break;
+			}
+		}break;
+		
+		default:
+			break;
+			
+		}
+		
+		if (expression_Binary_type == null)
+			throw new UnsupportedOperationException();
+		
+		//CodeGenUtils.genLogTOS(GRADE, mv, expression_Binary.getType());
+		CodeGenUtils.genLogTOS(GRADE, mv, expression_Binary_type);
+		return null;
 	}
 
 	@Override

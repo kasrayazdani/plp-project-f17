@@ -154,7 +154,7 @@ public class CodeGenVisitorTest {
 				+ "h <- @ 1;\n"
 				+ "h -> SCREEN;";	
 		byte[] bytecode = genCode(input);		
-		String[] commandLineArgs = {"true", "55"}; //create command line argument array to initialize params, none in this case		
+		String[] commandLineArgs = {"true", "55"};		
 		runCode(prog, bytecode, commandLineArgs);	
 		show("Log:\n"+RuntimeLog.globalLog);
 		assertEquals("entering main;0;true;1;55;leaving main;",RuntimeLog.globalLog.toString());
@@ -180,7 +180,7 @@ public class CodeGenVisitorTest {
 				;	
 		show(input);
 		byte[] bytecode = genCode(input);		
-		String[] commandLineArgs = {"true", "34", "56"}; //create command line argument array to initialize params, none in this case		
+		String[] commandLineArgs = {"true", "34", "56"};	
 		runCode(prog, bytecode, commandLineArgs);	
 		show("Log:\n"+RuntimeLog.globalLog);
 		assertEquals("entering main;0;true;1;34;2;56;true;34;34;leaving main;",RuntimeLog.globalLog.toString());
