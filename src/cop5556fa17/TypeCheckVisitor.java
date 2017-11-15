@@ -341,8 +341,8 @@ public class TypeCheckVisitor implements ASTVisitor {
 		Declaration dec = symbolTable.lookupType(statement_In.name);
 		if (dec != null) {
 			statement_In.setDec(dec);
-			if (TypeUtils.getType(statement_In.getDec().firstToken) != statement_In.source.visit(this, arg))
-				throw new SemanticException(statement_In.source.firstToken, "Return type not consistent.\n");
+			//if (TypeUtils.getType(statement_In.getDec().firstToken) != statement_In.source.visit(this, arg))
+			//	throw new SemanticException(statement_In.source.firstToken, "Return type not consistent.\n");
 			return Type.NONE;
 		}
 		else
