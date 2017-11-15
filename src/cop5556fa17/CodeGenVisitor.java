@@ -71,6 +71,8 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 
 	MethodVisitor mv; // visitor of method currently under construction
 	FieldVisitor fv;
+	
+	int args_counter = 0;
 
 	/** Indicates whether genPrint and genPrintTOS should generate code. */
 	final boolean DEVEL;
@@ -318,8 +320,12 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 	@Override
 	public Object visitSource_CommandLineParam(Source_CommandLineParam source_CommandLineParam, Object arg)
 			throws Exception {
-		// TODO 
-		throw new UnsupportedOperationException();
+		// TODO
+		mv.visitVarInsn(ALOAD, 0);
+		source_CommandLineParam.paramNum.visit(this, arg);
+		mv.visitInsn(AALOAD);
+		return null;
+		//throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -395,7 +401,24 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 	@Override
 	public Object visitStatement_In(Statement_In statement_In, Object arg) throws Exception {
 		// TODO (see comment )
-		throw new UnsupportedOperationException();
+		Type type = TypeUtils.getType(statement_In.getDec().firstToken);
+		statement_In.source.visit(this, arg);
+		switch(type) {
+		case INTEGER:
+			mv.visitMethodInsn(INVOKESTATIC, "java/lang/Integer", "parseInt", "(Ljava/lang/String;)I", false);
+			break;
+		case BOOLEAN:
+			mv.visitMethodInsn(INVOKESTATIC, "java/lang/Boolean", "parseBoolean", "(Ljava/lang/String;)Z", false);
+			break;
+		default:
+			break;
+		}
+		CodeGenUtils.genPrint(DEVEL, mv, "\n statement_In: "+statement_In.name+"=");
+		String intORbool = (type == Type.INTEGER) ? "I" : "Z";
+		mv.visitInsn(DUP);
+		mv.visitFieldInsn(PUTSTATIC, className, statement_In.name, intORbool);
+		CodeGenUtils.genPrintTOS(GRADE, mv, type);
+		return null;
 	}
 
 	

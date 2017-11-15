@@ -148,11 +148,11 @@ public class CodeGenVisitorTest {
 		String prog = "prog3";
 		String input = prog
 				+ " boolean g;\n"
-				+ "g <- @ 0;\n"
-				+ "g -> SCREEN;\n"
-				+ "int h;\n"
-				+ "h <- @ 1;\n"
-				+ "h -> SCREEN;";	
+				+ " g <- @ 0;\n"
+				+ " g -> SCREEN;\n"
+				+ " int h;\n"
+				+ " h <- @ 1;\n"
+				+ " h -> SCREEN;";	
 		byte[] bytecode = genCode(input);		
 		String[] commandLineArgs = {"true", "55"};		
 		runCode(prog, bytecode, commandLineArgs);	
