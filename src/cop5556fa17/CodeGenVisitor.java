@@ -282,10 +282,21 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 	@Override
 	public Object visitExpression_Conditional(Expression_Conditional expression_Conditional, Object arg)
 			throws Exception {
-		// TODO 
-		throw new UnsupportedOperationException();
+		// TODO
+		expression_Conditional.condition.visit(this, arg);
+		Label t = new Label();
+		Label f = new Label();
+		mv.visitInsn(ICONST_1);
+		mv.visitJumpInsn(IF_ICMPEQ, t);
+		expression_Conditional.falseExpression.visit(this, arg);
+		mv.visitJumpInsn(GOTO, f);
+		mv.visitLabel(t);
+		expression_Conditional.trueExpression.visit(this, arg);
+		mv.visitLabel(f);
+//		throw new UnsupportedOperationException();
 //		CodeGenUtils.genLogTOS(GRADE, mv, expression_Conditional.trueExpression.getType());
-//		return null;
+		CodeGenUtils.genLogTOS(GRADE, mv, expression_Conditional.getType());
+		return null;
 	}
 
 
