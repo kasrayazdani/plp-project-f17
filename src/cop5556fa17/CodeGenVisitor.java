@@ -413,7 +413,7 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 		default:
 			break;
 		}
-		CodeGenUtils.genPrint(DEVEL, mv, "\n statement_In: "+statement_In.name+"=");
+		//CodeGenUtils.genPrint(DEVEL, mv, "\n statement_In: "+statement_In.name+"=");
 		String intORbool = (type == Type.INTEGER) ? "I" : "Z";
 		mv.visitInsn(DUP);
 		mv.visitFieldInsn(PUTSTATIC, className, statement_In.name, intORbool);
@@ -477,9 +477,11 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 	public Object visitExpression_Ident(Expression_Ident expression_Ident,
 			Object arg) throws Exception {
 		//TODO
-		throw new UnsupportedOperationException();
-//		CodeGenUtils.genLogTOS(GRADE, mv, expression_Ident.getType());
-//		return null;
+		String fieldType = (expression_Ident.getType()==Type.INTEGER) ? "I" : "Z";
+		mv.visitFieldInsn(GETSTATIC, className, expression_Ident.name, fieldType);
+//		throw new UnsupportedOperationException();
+		CodeGenUtils.genLogTOS(GRADE, mv, expression_Ident.getType());
+		return null;
 	}
 
 

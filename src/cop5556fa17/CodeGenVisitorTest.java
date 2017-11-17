@@ -183,7 +183,7 @@ public class CodeGenVisitorTest {
 		String[] commandLineArgs = {"true", "34", "56"};	
 		runCode(prog, bytecode, commandLineArgs);	
 		show("Log:\n"+RuntimeLog.globalLog);
-		assertEquals("entering main;0;true;1;34;2;56;true;34;34;leaving main;",RuntimeLog.globalLog.toString());
+		assertEquals("entering main;0;true;1;34;2;56;true;34;34;34;leaving main;",RuntimeLog.globalLog.toString());
 	}
 	
 	
