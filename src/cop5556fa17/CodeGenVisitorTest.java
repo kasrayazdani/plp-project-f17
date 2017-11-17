@@ -118,7 +118,6 @@ public class CodeGenVisitorTest {
 
 	}
 	
-	
 	@Test
 	public void prog1() throws Exception {
 		String prog = "prog1";
