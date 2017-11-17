@@ -408,7 +408,8 @@ public class TypeCheckVisitor implements ASTVisitor {
 			Object arg) throws Exception {
 		if (symbolTable.lookupType(expression_Ident.name)==null) 
 			throw new SemanticException(expression_Ident.firstToken, expression_Ident.name + " not declared.\n");
-		return TypeUtils.getType(symbolTable.lookupType(expression_Ident.name).firstToken);
+		expression_Ident.setType(TypeUtils.getType(symbolTable.lookupType(expression_Ident.name).firstToken));
+		return expression_Ident.getType();
 		//throw new UnsupportedOperationException();
 	}
 

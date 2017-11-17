@@ -52,11 +52,12 @@
 package cop5556fa17.AST;
 
 import cop5556fa17.Scanner.Token;
+import cop5556fa17.TypeUtils.Type;
 
 public class Expression_Ident extends Expression {
 	
 	public final String name;
-	
+	public Type type;
 	
 
 	public Expression_Ident(Token firstToken, Token ident) {
@@ -71,7 +72,13 @@ public class Expression_Ident extends Expression {
 		return v.visitExpression_Ident(this, arg);
 	}
 
-
+	public void setType(Type type) {
+		this.type = type;
+	}
+	
+	public Type getType() {
+		return this.type;
+	}
 
 	@Override
 	public int hashCode() {
