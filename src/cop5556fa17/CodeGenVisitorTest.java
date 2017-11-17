@@ -186,6 +186,27 @@ public class CodeGenVisitorTest {
 		assertEquals("entering main;0;true;1;34;2;56;true;34;34;34;leaving main;",RuntimeLog.globalLog.toString());
 	}
 	
+	@Test
+	public void prog5() throws Exception {
+		String prog = "prog5";
+		String input = prog
+				     + " int var1 = 6;\n"
+				     + " int var2 = 8;\n"
+				     + " int var3 = var1>var2 ? var1-var2 : var2-var1;\n"
+				     + " var3 -> SCREEN;\n"
+				     + " int temp = var1;\n"
+				     + " var1 = var2;\n"
+				     + " var2 = temp;\n"
+				     + " int var4 = var1>var2 ? var1-var2 : var2-var1;\n"
+				     + " var4 -> SCREEN;";
+		show(input);
+		byte[] bytecode = genCode(input);		
+		String[] commandLineArgs = {};	
+		runCode(prog, bytecode, commandLineArgs);	
+		show("Log:\n"+RuntimeLog.globalLog);
+		assertEquals("entering main;6;8;6;8;false;8;6;2;2;2;6;8;6;8;6;true;8;6;2;2;2;leaving main;",
+				RuntimeLog.globalLog.toString());
+	}
 	
 	@Test
 	public void unaryExpr() throws Exception {
