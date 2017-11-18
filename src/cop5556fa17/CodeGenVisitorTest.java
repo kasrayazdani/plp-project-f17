@@ -281,14 +281,6 @@ public class CodeGenVisitorTest {
 		runCode(prog, bytecode, commandLineArgs);		
 		show("Log:\n"+RuntimeLog.globalLog);
 		assertEquals("entering main;10;5;10;5;2;0;true;false;leaving main;",RuntimeLog.globalLog.toString());
-		
-		input = prog
-			     + " ";
-		show(input);
-		bytecode = genCode(input);		
-		runCode(prog, bytecode, commandLineArgs);		
-		show("Log:\n"+RuntimeLog.globalLog);
-		assertEquals("entering main;;leaving main;",RuntimeLog.globalLog.toString());
 	}
 
 }
