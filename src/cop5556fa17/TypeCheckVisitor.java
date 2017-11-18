@@ -150,6 +150,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 					throw new SemanticException(expression_Unary.e.firstToken, "Return type not integer.\n");
 				break;				
 			}
+			expression_Unary.setType(type);
 			return type;
 		}
 		else

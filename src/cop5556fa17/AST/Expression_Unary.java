@@ -2,16 +2,26 @@ package cop5556fa17.AST;
 
 import cop5556fa17.Scanner.Kind;
 import cop5556fa17.Scanner.Token;
+import cop5556fa17.TypeUtils.Type;
 
 public class Expression_Unary extends Expression {
 	
 	public final Kind op;
 	public final Expression e;
+	public Type type;
 
 	public Expression_Unary(Token firstToken, Token op, Expression e) {
 		super(firstToken);
 		this.e = e;
 		this.op = op.kind;
+	}
+	
+	public void setType(Type type) {
+		this.type = type;
+	}
+	
+	public Type getType() {
+		return this.type;
 	}
 
 	@Override
