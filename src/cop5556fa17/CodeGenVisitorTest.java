@@ -175,14 +175,13 @@ public class CodeGenVisitorTest {
 				+ "k -> SCREEN;\n"
 				+ "int chosen;"
 				+ "chosen = g ? h : k;\n"
-				+ "chosen -> SCREEN;"
-				;	
+				+ "chosen -> SCREEN;";	
 		show(input);
 		byte[] bytecode = genCode(input);		
 		String[] commandLineArgs = {"true", "34", "56"};	
 		runCode(prog, bytecode, commandLineArgs);	
 		show("Log:\n"+RuntimeLog.globalLog);
-		assertEquals("entering main;0;true;1;34;2;56;true;34;34;34;leaving main;",RuntimeLog.globalLog.toString());
+		assertEquals("entering main;0;true;1;34;2;56;true;34;34;leaving main;",RuntimeLog.globalLog.toString());
 	}
 	
 	@Test
@@ -203,7 +202,7 @@ public class CodeGenVisitorTest {
 		String[] commandLineArgs = {};	
 		runCode(prog, bytecode, commandLineArgs);	
 		show("Log:\n"+RuntimeLog.globalLog);
-		assertEquals("entering main;6;8;6;8;false;8;6;2;2;2;6;8;6;8;6;true;8;6;2;2;2;leaving main;",
+		assertEquals("entering main;6;8;6;8;false;8;6;2;2;6;8;6;8;6;true;8;6;2;2;leaving main;",
 				RuntimeLog.globalLog.toString());
 	}
 	
