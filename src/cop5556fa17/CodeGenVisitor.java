@@ -38,6 +38,7 @@ import cop5556fa17.AST.Source_Ident;
 import cop5556fa17.AST.Source_StringLiteral;
 import cop5556fa17.AST.Statement_In;
 import cop5556fa17.AST.Statement_Out;
+import jdk.nashorn.internal.runtime.regexp.joni.constants.OPCode;
 import cop5556fa17.AST.Statement_Assign;
 //import cop5556fa17.image.ImageFrame;
 //import cop5556fa17.image.ImageSupport;
@@ -262,9 +263,51 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 	@Override
 	public Object visitExpression_Unary(Expression_Unary expression_Unary, Object arg) throws Exception {
 		// TODO 
-		throw new UnsupportedOperationException();
-//		CodeGenUtils.genLogTOS(GRADE, mv, expression_Unary.getType());
-//		return null;
+		switch(expression_Unary.op) {
+		case OP_EXCL:
+			Type type = expression_Unary.getType();
+			switch(type) {
+			case INTEGER:
+				expression_Unary.e.visit(this, arg);
+				mv.visitLdcInsn(new Integer(2147483647));
+				mv.visitInsn(IXOR);
+				break;
+			case BOOLEAN:
+				expression_Unary.e.visit(this, arg);
+				Label t = new Label();
+				Label f = new Label();
+				mv.visitInsn(ICONST_1);
+				mv.visitJumpInsn(IF_ICMPEQ, t);
+				mv.visitInsn(ICONST_1);
+				mv.visitJumpInsn(GOTO, f);
+				mv.visitLabel(t);
+				mv.visitInsn(ICONST_0);
+				mv.visitLabel(f);
+				break;
+			}break;
+		
+		case OP_PLUS:
+		case OP_MINUS: {
+			switch(expression_Unary.op) {
+			case OP_PLUS:
+				expression_Unary.e.visit(this, arg);
+				break;
+			case OP_MINUS:
+				expression_Unary.e.visit(this, arg);
+				mv.visitInsn(INEG);
+				break;
+			default:
+				break;
+			}
+		}break;
+		
+		default:
+			break;
+			
+		}
+//		throw new UnsupportedOperationException();
+		CodeGenUtils.genLogTOS(GRADE, mv, expression_Unary.getType());
+		return null;
 	}
 
 	// generate code to leave the two values on the stack
@@ -297,7 +340,7 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 		mv.visitLabel(f);
 //		throw new UnsupportedOperationException();
 //		CodeGenUtils.genLogTOS(GRADE, mv, expression_Conditional.trueExpression.getType());
-		CodeGenUtils.genLogTOS(GRADE, mv, expression_Conditional.getType());
+//		CodeGenUtils.genLogTOS(GRADE, mv, expression_Conditional.getType());
 		return null;
 	}
 
