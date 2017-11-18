@@ -222,5 +222,73 @@ public class CodeGenVisitorTest {
 		assertEquals("entering main;false;false;false;true;true;leaving main;",RuntimeLog.globalLog.toString());
 										
 	}
+	
+	@Test
+	public void binaryExpr1() throws Exception {
+		String prog = "binaryExpr1";
+		String input = prog
+				     + " int var1 = 5;\n"
+				     + " int var2 = 5;\n"
+				     + " boolean var3 = var1+-var2==0 ? true : false;\n"
+				     + " var3 -> SCREEN;";
+		show(input);
+		byte[] bytecode = genCode(input);		
+		String[] commandLineArgs = {}; 
+		runCode(prog, bytecode, commandLineArgs);		
+		show("Log:\n"+RuntimeLog.globalLog);
+		assertEquals("entering main;5;5;5;5;-5;0;0;true;true;true;leaving main;",RuntimeLog.globalLog.toString());
+	}
+	
+	@Test
+	public void binaryExpr2() throws Exception {
+		String prog = "binaryExpr2";
+		String input = prog
+				     + " boolean var1 = true;\n"
+				     + " boolean var2 = false;\n"
+				     + " boolean var3;\n"
+				     + " var3 = var1 & !var2 ? true : false;\n"
+				     + " var3 -> SCREEN;";
+		show(input);
+		byte[] bytecode = genCode(input);		
+		String[] commandLineArgs = {}; 
+		runCode(prog, bytecode, commandLineArgs);		
+		show("Log:\n"+RuntimeLog.globalLog);
+		assertEquals("entering main;true;false;true;false;true;true;true;true;leaving main;",RuntimeLog.globalLog.toString());
+		
+		input = prog
+		     + " boolean var1 = true;\n"
+		     + " boolean var2 = false;\n"
+		     + " boolean var3;\n"
+		     + " var3 = var1 & !!var2 ? true : false;\n"
+		     + " var3 -> SCREEN;";
+		show(input);
+		bytecode = genCode(input);		
+		runCode(prog, bytecode, commandLineArgs);		
+		show("Log:\n"+RuntimeLog.globalLog);
+		assertEquals("entering main;true;false;true;false;true;false;false;false;false;leaving main;",RuntimeLog.globalLog.toString());
+	}
+	
+	@Test
+	public void binaryExpr3() throws Exception {
+		String prog = "binaryExpr2";
+		String input = prog
+				     + " int var1 = 10;\n"
+				     + " int var2 = 5;\n"
+				     + " boolean isDivisor = var1/var2 != 0 ? false : true;\n";
+		show(input);
+		byte[] bytecode = genCode(input);		
+		String[] commandLineArgs = {}; 
+		runCode(prog, bytecode, commandLineArgs);		
+		show("Log:\n"+RuntimeLog.globalLog);
+		assertEquals("entering main;10;5;10;5;2;0;true;false;leaving main;",RuntimeLog.globalLog.toString());
+		
+		input = prog
+			     + " ";
+		show(input);
+		bytecode = genCode(input);		
+		runCode(prog, bytecode, commandLineArgs);		
+		show("Log:\n"+RuntimeLog.globalLog);
+		assertEquals("entering main;;leaving main;",RuntimeLog.globalLog.toString());
+	}
 
 }
