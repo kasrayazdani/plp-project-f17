@@ -39,8 +39,8 @@ import cop5556fa17.AST.Source_StringLiteral;
 import cop5556fa17.AST.Statement_In;
 import cop5556fa17.AST.Statement_Out;
 import cop5556fa17.AST.Statement_Assign;
-//import cop5556fa17.image.ImageFrame;
-//import cop5556fa17.image.ImageSupport;
+import cop5556fa17.image.ImageFrame;
+import cop5556fa17.image.ImageSupport;
 
 public class CodeGenVisitor implements ASTVisitor, Opcodes {
 
