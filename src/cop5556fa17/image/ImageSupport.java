@@ -1,4 +1,4 @@
-package cop5556fa17;
+package cop5556fa17.image;
 
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
 

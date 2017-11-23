@@ -1,4 +1,4 @@
-package cop5556fa17;
+package cop5556fa17.image;
 
 import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
