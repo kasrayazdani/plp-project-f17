@@ -1,6 +1,7 @@
 package cop5556fa17;
 
 import java.util.ArrayList;
+import java.awt.Image;
 
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
@@ -347,7 +348,20 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 	@Override
 	public Object visitDeclaration_Image(Declaration_Image declaration_Image, Object arg) throws Exception {
 		// TODO HW6
-		throw new UnsupportedOperationException();
+		String fieldName = declaration_Image.name;
+		String fieldType = "Ljava/awt/Image;";
+		fv = cw.visitField(ACC_STATIC, fieldName, fieldType, null, null);
+		fv.visitEnd();
+		if (declaration_Image.source != null) {
+			declaration_Image.source.visit(this, arg);
+			mv.visitInsn(DUP);
+			mv.visitFieldInsn(PUTSTATIC, className, declaration_Image.name, fieldType);
+		}
+		else {
+			//TODO: see description
+		}
+		return null;
+		//throw new UnsupportedOperationException();
 	}
 	
   
@@ -381,7 +395,15 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 	public Object visitDeclaration_SourceSink(Declaration_SourceSink declaration_SourceSink, Object arg)
 			throws Exception {
 		// TODO HW6
-		throw new UnsupportedOperationException();
+		String fieldName = declaration_SourceSink.name;
+		String fieldType = "Ljava/lang/String;";
+		fv = cw.visitField(ACC_STATIC, fieldName, fieldType, null, null);
+		fv.visitEnd();
+		if (declaration_SourceSink.source != null) {
+			//TODO: see description
+		}
+		return null;
+		//throw new UnsupportedOperationException();
 	}
 	
 
