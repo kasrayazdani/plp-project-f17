@@ -349,7 +349,7 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 	public Object visitDeclaration_Image(Declaration_Image declaration_Image, Object arg) throws Exception {
 		// TODO HW6
 		String fieldName = declaration_Image.name;
-		String fieldType = "Ljava/awt/Image;";
+		String fieldType = ImageSupport.ImageDesc;
 		fv = cw.visitField(ACC_STATIC, fieldName, fieldType, null, null);
 		fv.visitEnd();
 		if (declaration_Image.source != null) {
