@@ -47,7 +47,7 @@ public class ImageSupport {
 	}
 
 	public static final String readFromFileSig = "(" + StringDesc + ")" + ImageDesc;
-	static BufferedImage readFromFile(String filename) {
+	public static BufferedImage readFromFile(String filename) {
 		File f = new File(filename);
 		BufferedImage bi;
 		try {
