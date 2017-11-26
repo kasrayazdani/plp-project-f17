@@ -356,7 +356,8 @@ public class TypeCheckVisitor implements ASTVisitor {
 			Object arg) throws Exception {
 		Type e_type = (Type) statement_Assign.e.visit(this, arg);
 		Type lhs_type = (Type) statement_Assign.lhs.visit(this, arg);
-		if (lhs_type != e_type)
+		//if (lhs_type != e_type)
+		if (!((lhs_type == Type.IMAGE && e_type == Type.INTEGER) || (lhs_type == e_type)))
 			throw new SemanticException(statement_Assign.e.firstToken, "Return type not consistent.\n");
 		statement_Assign.setCartesian(statement_Assign.lhs.isCartesian());
 		return Type.NONE;
