@@ -73,8 +73,6 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 	MethodVisitor mv; // visitor of method currently under construction
 	FieldVisitor fv;
 	
-	int args_counter = 0;
-
 	/** Indicates whether genPrint and genPrintTOS should generate code. */
 	final boolean DEVEL;
 	final boolean GRADE;
@@ -359,6 +357,12 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 		}
 		else {
 			//TODO: see description
+			if (declaration_Image.xSize != null && declaration_Image.ySize != null) {
+				//ImageSupport.makeImage(declaration_Image.xSize, declaration_Image.ySize);
+			}
+			else {
+				//TODO: see description
+			}
 		}
 		return null;
 		//throw new UnsupportedOperationException();
@@ -368,7 +372,9 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 	@Override
 	public Object visitSource_StringLiteral(Source_StringLiteral source_StringLiteral, Object arg) throws Exception {
 		// TODO HW6
-		throw new UnsupportedOperationException();
+		mv.visitLdcInsn(source_StringLiteral.fileOrUrl);
+		return null;
+		//throw new UnsupportedOperationException();
 	}
 
 	
@@ -387,7 +393,9 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 	@Override
 	public Object visitSource_Ident(Source_Ident source_Ident, Object arg) throws Exception {
 		// TODO HW6
-		throw new UnsupportedOperationException();
+		mv.visitFieldInsn(GETSTATIC, className, source_Ident.name, "Ljava/lang/String;");
+		return null;
+		//throw new UnsupportedOperationException();
 	}
 
 
@@ -400,7 +408,8 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 		fv = cw.visitField(ACC_STATIC, fieldName, fieldType, null, null);
 		fv.visitEnd();
 		if (declaration_SourceSink.source != null) {
-			//TODO: see description
+			declaration_SourceSink.source.visit(this, arg);
+			mv.visitFieldInsn(PUTSTATIC, className, fieldName, fieldType);
 		}
 		return null;
 		//throw new UnsupportedOperationException();
@@ -511,6 +520,9 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 			String intORbool = type==Type.INTEGER ? "I" : "Z";
 			mv.visitFieldInsn(PUTSTATIC, className, lhs.name, intORbool);
 			return null;
+		}
+		else if (type == Type.IMAGE) {
+			
 		}
 		throw new UnsupportedOperationException();
 	}
