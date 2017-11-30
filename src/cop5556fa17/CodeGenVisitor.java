@@ -95,7 +95,7 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 		Label mainStart = new Label();
 		mv.visitLabel(mainStart);		
 		// if GRADE, generates code to add string to log
-		CodeGenUtils.genLog(GRADE, mv, "entering main");
+		//CodeGenUtils.genLog(GRADE, mv, "entering main");
 
 		// visit decs and statements to add field to class
 		//  and instructions to main method, respectivley
@@ -105,7 +105,7 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 		}
 
 		//generates code to add string to log
-		CodeGenUtils.genLog(GRADE, mv, "leaving main");
+		//CodeGenUtils.genLog(GRADE, mv, "leaving main");
 		
 		//adds the required (by the JVM) return statement to main
 		mv.visitInsn(RETURN);
@@ -254,7 +254,7 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 			throw new UnsupportedOperationException();
 		
 		//CodeGenUtils.genLogTOS(GRADE, mv, expression_Binary.getType());
-		CodeGenUtils.genLogTOS(GRADE, mv, expression_Binary_type);
+		//CodeGenUtils.genLogTOS(GRADE, mv, expression_Binary_type);
 		return null;
 	}
 
@@ -304,7 +304,7 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 			
 		}
 //		throw new UnsupportedOperationException();
-		CodeGenUtils.genLogTOS(GRADE, mv, expression_Unary.getType());
+		//CodeGenUtils.genLogTOS(GRADE, mv, expression_Unary.getType());
 		return null;
 	}
 
@@ -422,7 +422,7 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 		// TODO
 		mv.visitLdcInsn(expression_IntLit.value);
 		//throw new UnsupportedOperationException();
-		CodeGenUtils.genLogTOS(GRADE, mv, Type.INTEGER);
+		//CodeGenUtils.genLogTOS(GRADE, mv, Type.INTEGER);
 		return null;
 	}
 
@@ -490,7 +490,7 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 		String intORbool = (type == Type.INTEGER) ? "I" : "Z";
 		mv.visitInsn(DUP);
 		mv.visitFieldInsn(PUTSTATIC, className, statement_In.name, intORbool);
-		CodeGenUtils.genPrintTOS(GRADE, mv, type);
+		//CodeGenUtils.genPrintTOS(GRADE, mv, type);
 		return null;
 	}
 
@@ -545,7 +545,7 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 		//TODO
 		mv.visitLdcInsn(expression_BooleanLit.value);
 		//throw new UnsupportedOperationException();
-		CodeGenUtils.genLogTOS(GRADE, mv, Type.BOOLEAN);
+		//CodeGenUtils.genLogTOS(GRADE, mv, Type.BOOLEAN);
 		return null;
 	}
 
@@ -556,7 +556,7 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 		String fieldType = (expression_Ident.getType()==Type.INTEGER) ? "I" : "Z";
 		mv.visitFieldInsn(GETSTATIC, className, expression_Ident.name, fieldType);
 //		throw new UnsupportedOperationException();
-		CodeGenUtils.genLogTOS(GRADE, mv, expression_Ident.getType());
+		//CodeGenUtils.genLogTOS(GRADE, mv, expression_Ident.getType());
 		return null;
 	}
 
