@@ -312,6 +312,12 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 	@Override
 	public Object visitIndex(Index index, Object arg) throws Exception {
 		// TODO HW6
+		index.e0.visit(this, arg);
+		index.e1.visit(this, arg);
+		if (!index.isCartesian()) {
+			//TODO convert a,r to x,y
+			//See instruction
+		}
 		throw new UnsupportedOperationException();
 	}
 
@@ -352,18 +358,37 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 		fv.visitEnd();
 		if (declaration_Image.source != null) {
 			declaration_Image.source.visit(this, arg);
-			mv.visitInsn(DUP);
-			mv.visitFieldInsn(PUTSTATIC, className, declaration_Image.name, fieldType);
+			if (declaration_Image.xSize==null && declaration_Image.ySize==null) {
+				mv.visitInsn(ACONST_NULL);
+				mv.visitInsn(ACONST_NULL);
+			}
+			else {
+				declaration_Image.xSize.visit(this, arg);
+				mv.visitMethodInsn(INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false);
+				declaration_Image.ySize.visit(this, arg);
+				mv.visitMethodInsn(INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false);
+			}
+			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "cop5556fa17/image/ImageSupport", "readImage", 
+					"(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V", false);
 		}
 		else {
 			//TODO: see description
 			if (declaration_Image.xSize != null && declaration_Image.ySize != null) {
-				//ImageSupport.makeImage(declaration_Image.xSize, declaration_Image.ySize);
+				declaration_Image.xSize.visit(this, arg);
+				mv.visitMethodInsn(INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false);
+				declaration_Image.ySize.visit(this, arg);
+				mv.visitMethodInsn(INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false);
 			}
 			else {
-				//TODO: see description
+				mv.visitIntInsn(BIPUSH, 256);
+				mv.visitMethodInsn(INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false);
+				mv.visitIntInsn(BIPUSH, 256);
+				mv.visitMethodInsn(INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false);
 			}
+			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "cop5556fa17/image/ImageSupport", "makeImage", 
+					"(Ljava/lang/Object;Ljava/lang/Object;)V", false);
 		}
+		mv.visitFieldInsn(PUTSTATIC, className, declaration_Image.name, fieldType);
 		return null;
 		//throw new UnsupportedOperationException();
 	}
