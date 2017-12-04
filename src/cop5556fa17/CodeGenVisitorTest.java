@@ -15,7 +15,7 @@ import org.junit.rules.ExpectedException;
 import cop5556fa17.CodeGenUtils.DynamicClassLoader;
 import cop5556fa17.AST.Program;
 import cop5556fa17.image.ImageResources;
-import cop5556fa17.image.ImageSupport;
+import cop5556fa17.ImageSupport;
 
 public class CodeGenVisitorTest implements ImageResources{
 	
