@@ -399,7 +399,7 @@ public class CodeGenVisitorTest implements ImageResources{
 		byte[] bytecode = genCode(input);		
 		String[] commandLineArgs = {}; 
 		runCode(prog, bytecode, commandLineArgs);		
-		
+
 		BufferedImage loggedImage = RuntimeLog.globalImageLog.get(0);
 		for(int y = 0; y < 512; y++) {
 			for (int x = 0; x < 512; x++) {
@@ -410,20 +410,20 @@ public class CodeGenVisitorTest implements ImageResources{
 		}
 		keepFrame();
 	}
-	
 
-@Test
-public void checkConstants() throws Exception{
-	String prog = "checkConstants";
-	String input = prog + " \n"
-			+"int z = Z; z -> SCREEN;\n"
-			+"int def_X = DEF_X; def_X -> SCREEN;\n"
-			+"int def_Y = DEF_Y; def_Y -> SCREEN;\n"
-			;
-	byte[] bytecode = genCode(input);		
-	String[] commandLineArgs = {}; 
-	runCode(prog, bytecode, commandLineArgs);	
-	System.out.println("Z=" + 0xFFFFFF);
-	assertEquals(Z + ";256;256;", RuntimeLog.getGlobalString());
-}
+
+	@Test
+	public void checkConstants() throws Exception{
+		String prog = "checkConstants";
+		String input = prog + " \n"
+				+"int z = Z; z -> SCREEN;\n"
+				+"int def_X = DEF_X; def_X -> SCREEN;\n"
+				+"int def_Y = DEF_Y; def_Y -> SCREEN;\n"
+				;
+		byte[] bytecode = genCode(input);		
+		String[] commandLineArgs = {}; 
+		runCode(prog, bytecode, commandLineArgs);	
+		System.out.println("Z=" + 0xFFFFFF);
+		assertEquals(Z + ";256;256;", RuntimeLog.getGlobalString());
+	}
 }
