@@ -18,7 +18,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.util.TraceClassVisitor;
 
 import cop5556fa17.TypeUtils.Type;
-import cop5556fa17.image.ImageSupport;
+import cop5556fa17.ImageSupport;
 
 public class CodeGenUtils{
 	
