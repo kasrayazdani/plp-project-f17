@@ -644,7 +644,16 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 			statement_Assign.setCartesian(statement_Assign.lhs.isCartesian());
 			return null;
 		}
-		if (type == Type.IMAGE) {			
+		if (type == Type.IMAGE) {	
+			
+			mv.visitFieldInsn(GETSTATIC, className, statement_Assign.lhs.name, "Ljava/awt/image/BufferedImage;");
+			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "cop5556fa17/ImageSupport", "getX", ImageSupport.getXSig, false);
+			mv.visitVarInsn(ISTORE, 3);
+			
+			mv.visitFieldInsn(GETSTATIC, className, statement_Assign.lhs.name, "Ljava/awt/image/BufferedImage;");
+			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "cop5556fa17/ImageSupport", "getY", ImageSupport.getYSig, false);
+			mv.visitVarInsn(ISTORE, 4);
+			
 			// Looping
 			mv.visitInsn(ICONST_0);
 			mv.visitVarInsn(ISTORE, 1);
@@ -676,8 +685,9 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 			mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
 			
 			mv.visitVarInsn(ILOAD, 2); //y
-			mv.visitFieldInsn(GETSTATIC, className, statement_Assign.lhs.name, "Ljava/awt/image/BufferedImage;");
-			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "cop5556fa17/ImageSupport", "getY", ImageSupport.getYSig, false);
+			mv.visitVarInsn(ILOAD, 4); //Y
+//			mv.visitFieldInsn(GETSTATIC, className, statement_Assign.lhs.name, "Ljava/awt/image/BufferedImage;");
+//			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "cop5556fa17/ImageSupport", "getY", ImageSupport.getYSig, false);
 			mv.visitJumpInsn(IF_ICMPLT, l6);
 			
 			Label l8 = new Label();
@@ -687,8 +697,9 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 			mv.visitFrame(Opcodes.F_CHOP,1, null, 0, null);
 			
 			mv.visitVarInsn(ILOAD, 1); //x
-			mv.visitFieldInsn(GETSTATIC, className, statement_Assign.lhs.name, "Ljava/awt/image/BufferedImage;");
-			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "cop5556fa17/ImageSupport", "getX", 	ImageSupport.getXSig, false);
+			mv.visitVarInsn(ILOAD, 3); //X
+//			mv.visitFieldInsn(GETSTATIC, className, statement_Assign.lhs.name, "Ljava/awt/image/BufferedImage;");
+//			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "cop5556fa17/ImageSupport", "getX", 	ImageSupport.getXSig, false);
 			mv.visitJumpInsn(IF_ICMPLT, l3);
 
 			return null;
