@@ -19,7 +19,7 @@ import cop5556fa17.ImageSupport;
 
 public class CodeGenVisitorTest implements ImageResources{
 	
-	static String imageFile1 = "/cise/homes/vkg/github/plp-project-f17/src/cop5556fa17/image/input_image.jpg";
+	//static String imageFile1 = "/cise/homes/vkg/github/plp-project-f17/src/cop5556fa17/image/input_image.jpg";
 	
 	static boolean doPrint = true;
 	static boolean doCreateFile = false;
@@ -242,12 +242,12 @@ public class CodeGenVisitorTest implements ImageResources{
 				+ "g -> SCREEN;\n"
 				+ "int h;\n"
 				+ "h <- @ 1;\n"
-				+ "h -> SCREEN;\n"
 				+ "int k;\n"
 				+ "k <- @ 2;\n"
-				+ "k -> SCREEN;\n"
 				+ "int chosen;"
 				+ "chosen = g ? h : k;\n"
+				+ "h -> SCREEN;\n"
+				+ "k -> SCREEN;\n"
 				+ "chosen -> SCREEN;"
 				;	
 		show(input);
@@ -318,6 +318,30 @@ public class CodeGenVisitorTest implements ImageResources{
 				     + " h[[r,a]] =  g[r,a];\n"
 				     + " h -> SCREEN; \n"
 				     + " h -> f;";
+	}
+	
+	@Test
+	public void image10() throws Exception {
+		devel = false;
+		grade = true;
+		String prog = "image10";
+		String input = prog 
+					 + " //args: <imageURL>\n"
+				     + " image[1024,1024] g; \n\n"
+				     + " image[1024,1024] h; \n"
+				     + " g <- @ 0;\n"
+				     + " g -> SCREEN;\n"
+				     + " h[[x,y]] =  g[x,Y-y];\n"
+				     + " h -> SCREEN; \n";
+		
+		byte[] bytecode = genCode(input);		
+		String[] commandLineArgs = {imageFile1}; 
+		runCode(prog, bytecode, commandLineArgs);		
+		
+		BufferedImage refImage0 = ImageSupport.readImage(imageFile1, 1024, 1024);
+		BufferedImage loggedImage0 = RuntimeLog.globalImageLog.get(1);
+		assertTrue(ImageSupport.compareImages(refImage0,loggedImage0));
+		keepFrame();
 	}
 	
 	@Test
