@@ -19,6 +19,8 @@ import cop5556fa17.ImageSupport;
 
 public class CodeGenVisitorTest implements ImageResources{
 	
+	static String imageFile1 = "/cise/homes/vkg/github/plp-project-f17/src/cop5556fa17/image/input_image.jpg";
+	
 	static boolean doPrint = true;
 	static boolean doCreateFile = false;
 
@@ -301,7 +303,22 @@ public class CodeGenVisitorTest implements ImageResources{
 		keepFrame();
 	}
 	
-
+	@Test
+	public void image7() throws Exception {
+		devel = false;
+		grade = true;
+		String prog = "image7";
+		String input = prog
+				     + " //args: <inputImageURL> <outputImageURL>\n"
+				     + " image[1024,1024] g; \n\n"
+				     + " image[1024,1024] h; \n"
+				     + " g <- @ 0;\n "
+				     + " file f = @ 1; \n"
+				     + " g -> SCREEN;\n"
+				     + " h[[r,a]] =  g[r,a];\n"
+				     + " h -> SCREEN; \n"
+				     + " h -> f;";
+	}
 	
 	@Test
 	public void imageGen3() throws Exception{
@@ -409,6 +426,27 @@ public class CodeGenVisitorTest implements ImageResources{
 			}
 		}
 		keepFrame();
+	}
+	
+	@Test
+	public void imageTestXY() throws Exception {
+		devel = false;
+		grade = true;
+		String prog = "imageTestXY";
+		String input = prog 
+				     + " image[500,512] g;\n"
+				     + " g[[x,y]] = Z;\n"
+				     + " int foo = X;\n"
+				     + " int bar = Y;\n"
+				     + " foo -> SCREEN;\n"
+				     + " bar -> SCREEN;";
+		
+		byte[] bytecode = genCode(input);		
+		String[] commandLineArgs = {}; 
+		runCode(prog, bytecode, commandLineArgs);		
+
+		//BufferedImage loggedImage = RuntimeLog.globalImageLog.get(0);
+		assertEquals("512;500;",RuntimeLog.globalLog.toString());
 	}
 
 

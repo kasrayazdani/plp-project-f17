@@ -538,10 +538,10 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 			mv.visitVarInsn(ILOAD, 6);
 			break;
 		case KW_r:
-			mv.visitVarInsn(ILOAD, 1);
+			mv.visitVarInsn(ILOAD, 7);
 			break;
 		case KW_a:
-			mv.visitVarInsn(ILOAD, 2);
+			mv.visitVarInsn(ILOAD, 8);
 			break;
 		case KW_DEF_X:
 		case KW_DEF_Y:
@@ -566,7 +566,10 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 		// TODO HW6 remaining cases
 		Type dec_type = TypeUtils.getType(statement_Out.getDec().firstToken);
 		if (dec_type == Type.BOOLEAN || dec_type == Type.INTEGER) {
+			String intORbool = (dec_type==Type.INTEGER) ? "I" : "Z";
+			//mv.visitFieldInsn(GETSTATIC, className, statement_Out.name, intORbool);
 			CodeGenUtils.genLogTOS(GRADE, mv, dec_type);
+			mv.visitInsn(POP);
 			return null;
 		}
 		if (dec_type == Type.IMAGE) {
@@ -644,15 +647,15 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 			statement_Assign.setCartesian(statement_Assign.lhs.isCartesian());
 			return null;
 		}
-		if (type == Type.IMAGE) {	
-			
-			mv.visitFieldInsn(GETSTATIC, className, statement_Assign.lhs.name, "Ljava/awt/image/BufferedImage;");
-			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "cop5556fa17/ImageSupport", "getX", ImageSupport.getXSig, false);
-			mv.visitVarInsn(ISTORE, 3);
+		if (type == Type.IMAGE) {
 			
 			mv.visitFieldInsn(GETSTATIC, className, statement_Assign.lhs.name, "Ljava/awt/image/BufferedImage;");
 			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "cop5556fa17/ImageSupport", "getY", ImageSupport.getYSig, false);
 			mv.visitVarInsn(ISTORE, 4);
+			
+			mv.visitFieldInsn(GETSTATIC, className, statement_Assign.lhs.name, "Ljava/awt/image/BufferedImage;");
+			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "cop5556fa17/ImageSupport", "getX", ImageSupport.getXSig, false);
+			mv.visitVarInsn(ISTORE, 3);
 			
 			// Looping
 			mv.visitInsn(ICONST_0);
