@@ -323,8 +323,18 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 	public Object visitIndex(Index index, Object arg) throws Exception {
 		// TODO HW6
 		if (!index.isCartesian()) {
-			mv.visitVarInsn(ILOAD, 1);
-			mv.visitVarInsn(ILOAD, 2);
+			index.e0.visit(this, arg);
+			index.e1.visit(this, arg);
+			//cart_x
+			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "cop5556fa17/RuntimeFunctions", "cart_x", 
+					RuntimeFunctions.cart_xSig, false);
+			index.e0.visit(this, arg);
+			index.e1.visit(this, arg);
+			//cart_y
+			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "cop5556fa17/RuntimeFunctions", "cart_y", 
+					RuntimeFunctions.cart_ySig, false);
+			//mv.visitVarInsn(ILOAD, 1);
+			//mv.visitVarInsn(ILOAD, 2);
 		}
 		else {
 			index.e0.visit(this, arg);
@@ -538,9 +548,19 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 			mv.visitVarInsn(ILOAD, 6);
 			break;
 		case KW_r:
+			mv.visitVarInsn(ILOAD, 1);
+			mv.visitVarInsn(ILOAD, 2);
+			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "cop5556fa17/RuntimeFunctions", "polar_r", 
+					RuntimeFunctions.polar_rSig, false);
+			mv.visitVarInsn(ISTORE, 7);
 			mv.visitVarInsn(ILOAD, 7);
 			break;
 		case KW_a:
+			mv.visitVarInsn(ILOAD, 1);
+			mv.visitVarInsn(ILOAD, 2);
+			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "cop5556fa17/RuntimeFunctions", "polar_a", 
+					RuntimeFunctions.polar_aSig, false);
+			mv.visitVarInsn(ISTORE, 8);
 			mv.visitVarInsn(ILOAD, 8);
 			break;
 		case KW_DEF_X:
@@ -567,9 +587,10 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 		Type dec_type = TypeUtils.getType(statement_Out.getDec().firstToken);
 		if (dec_type == Type.BOOLEAN || dec_type == Type.INTEGER) {
 			String intORbool = (dec_type==Type.INTEGER) ? "I" : "Z";
-			//mv.visitFieldInsn(GETSTATIC, className, statement_Out.name, intORbool);
-			CodeGenUtils.genLogTOS(GRADE, mv, dec_type);
-			mv.visitInsn(POP);
+			mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;"); 			
+			mv.visitFieldInsn(GETSTATIC, className, statement_Out.name, intORbool ); 			
+			CodeGenUtils.genLogTOS(GRADE, mv, dec_type); 			
+			mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println", "("+intORbool+")V", false);
 			return null;
 		}
 		if (dec_type == Type.IMAGE) {
@@ -725,9 +746,9 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 		}
 		else if (type == Type.IMAGE) {
 			mv.visitFieldInsn(GETSTATIC, className, lhs.name, ImageSupport.ImageDesc);
-			//mv.visitVarInsn(ISTORE, 3); //x
-			//mv.visitVarInsn(ISTORE, 4); //y
-			lhs.index.visit(this, arg);
+			mv.visitVarInsn(ILOAD, 1);
+			mv.visitVarInsn(ILOAD, 2);
+			//lhs.index.visit(this, arg);
 			mv.visitMethodInsn(INVOKESTATIC, ImageSupport.className, "setPixel", 
 					ImageSupport.setPixelSig, false);
 			return null;
@@ -749,8 +770,7 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 	@Override
 	public Object visitSink_Ident(Sink_Ident sink_Ident, Object arg) throws Exception {
 		//TODO HW6
-		mv.visitFieldInsn(GETSTATIC, className, sink_Ident.name, ImageSupport.ImageDesc);
-		mv.visitLdcInsn(ImageResources.imageFile2);
+		mv.visitFieldInsn(GETSTATIC, className, sink_Ident.name, "Ljava/lang/String;");
 		mv.visitMethodInsn(Opcodes.INVOKESTATIC, "cop5556fa17/ImageSupport", "write", 
 				ImageSupport.writeSig, false);
 		return null;
