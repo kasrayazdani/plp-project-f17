@@ -250,7 +250,8 @@ public class TypeCheckVisitor implements ASTVisitor {
 			Source_CommandLineParam source_CommandLineParam, Object arg)
 			throws Exception {
 		if ((Type) source_CommandLineParam.paramNum.visit(this, arg) == Type.INTEGER)
-			return Type.INTEGER;
+			return null;
+			//return Type.INTEGER;
 		else
 			throw new SemanticException(source_CommandLineParam.firstToken, "Return type not integer.\n");
 		//throw new UnsupportedOperationException();
@@ -275,7 +276,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 			throws Exception {
 		if (symbolTable.lookupType(declaration_SourceSink.name) == null) {
 			Type type = (Type) declaration_SourceSink.source.visit(this, arg);
-			if (TypeUtils.getType(declaration_SourceSink.firstToken) != type)
+			if (!(TypeUtils.getType(declaration_SourceSink.firstToken) == type || type == null))
 				throw new SemanticException(declaration_SourceSink.source.firstToken, "Source rerurn type mismatch.\n");
 			symbolTable.insert(declaration_SourceSink.name,declaration_SourceSink);
 			return type;
