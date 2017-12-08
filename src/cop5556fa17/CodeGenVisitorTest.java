@@ -509,6 +509,8 @@ public class CodeGenVisitorTest implements ImageResources{
 
 	@Test
 	public void imageIO1() throws Exception {
+		devel = false;
+		grade = true;
 		String prog = "imageIO1";
 		String input = prog
 				    + " //args: <inputImageFullPath> <outputImageFullPath>\n "
@@ -528,6 +530,59 @@ public class CodeGenVisitorTest implements ImageResources{
 		BufferedImage loggedImage0 = RuntimeLog.globalImageLog.get(0);
 		BufferedImage loggedImage1 = RuntimeLog.globalImageLog.get(1);
 		assertTrue(ImageSupport.compareImages(loggedImage0,loggedImage1));
+		
+		keepFrame();
+	}
+	
+	@Test
+	public void imageIO2() throws Exception {
+		String prog = "imageIO2";
+		String input = prog 
+				     + "//args: <imageURL>\n"
+				     + " image g; \n" 
+				     + " file f = \"newImage.jpg\"; \n"
+				     + " g <- @ 0;\n"
+				     + " g -> SCREEN;\n"
+				     + " g -> f;\n"
+				     + " image h;\n"
+				     + " h <- f;\n"
+				     + " h -> SCREEN;";
+		
+		byte[] bytecode = genCode(input);		
+		String[] commandLineArgs = {imageURL1}; 
+		runCode(prog, bytecode, commandLineArgs);	
+		
+		BufferedImage loggedImage0 = RuntimeLog.globalImageLog.get(0);
+		BufferedImage loggedImage1 = RuntimeLog.globalImageLog.get(1);
+		assertTrue(ImageSupport.compareImages(loggedImage0,loggedImage1));
+		
+		keepFrame();
+	}
+	
+	@Test
+	public void imagePreDef() throws Exception {
+		String prog = "imagePreDef";
+		String input = prog
+					 + "//args: <imageURL>\n"
+					 + " image g; \n"
+					 + " g[[r,a]] = cart_x[r,a]; \n"
+					 + " g -> SCREEN;\n";
+		
+		byte[] bytecode = genCode(input);		
+		String[] commandLineArgs = {imageURL1}; 
+		runCode(prog, bytecode, commandLineArgs);	
+		
+		BufferedImage loggedImage = RuntimeLog.globalImageLog.get(0);
+		for(int y = 0; y < 256; y++) {
+			for (int x = 0; x < 256; x++) {
+				int r = RuntimeFunctions.polar_r(x, y);
+				int a = RuntimeFunctions.polar_a(x, y);
+				int pixelRef = RuntimeFunctions.cart_x(r, a); 
+				int pixel = ImageSupport.getPixel(loggedImage, x,y);
+				assertEquals(pixelRef, pixel);
+			}
+		}
+		keepFrame();
 	}
 
 	@Test
