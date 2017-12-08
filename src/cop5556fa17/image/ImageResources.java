@@ -3,7 +3,7 @@ package cop5556fa17.image;
 public interface ImageResources {
 
 	public final static String imageFile1 = "/Users/vishalgupta/Acads/PLP/plp-project-f17/src/cop5556fa17/image/input_image.jpg";
-	public final static String imageFile2 = "output_image.jpg";
+	public final static String imageFile2 = "/Users/vishalgupta/Acads/PLP/plp-project-f17/src/cop5556fa17/image/output_image.jpg";
 	
 	public final static String imageURL1 = "file://\\" + imageFile1;
 	
