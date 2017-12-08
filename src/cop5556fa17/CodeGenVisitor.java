@@ -670,13 +670,31 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 		}
 		if (type == Type.IMAGE) {
 			
-			mv.visitFieldInsn(GETSTATIC, className, statement_Assign.lhs.name, "Ljava/awt/image/BufferedImage;");
-			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "cop5556fa17/ImageSupport", "getY", ImageSupport.getYSig, false);
+			// get Y
+			mv.visitFieldInsn(GETSTATIC, className, statement_Assign.lhs.name, ImageSupport.ImageDesc);
+			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "cop5556fa17/ImageSupport", "getY", 
+					ImageSupport.getYSig, false);
 			mv.visitVarInsn(ISTORE, 4);
 			
-			mv.visitFieldInsn(GETSTATIC, className, statement_Assign.lhs.name, "Ljava/awt/image/BufferedImage;");
-			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "cop5556fa17/ImageSupport", "getX", ImageSupport.getXSig, false);
+			//get X
+			mv.visitFieldInsn(GETSTATIC, className, statement_Assign.lhs.name, ImageSupport.ImageDesc);
+			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "cop5556fa17/ImageSupport", "getX", 
+					ImageSupport.getXSig, false);
 			mv.visitVarInsn(ISTORE, 3);
+			
+			//get R
+			mv.visitVarInsn(ILOAD, 3);
+			mv.visitVarInsn(ILOAD, 4);
+			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "cop5556fa17/RuntimeFunctions", "polar_r", 
+					RuntimeFunctions.polar_rSig, false);
+			mv.visitVarInsn(ISTORE, 5);
+			
+			//get A
+			mv.visitVarInsn(ILOAD, 3);
+			mv.visitVarInsn(ILOAD, 4);
+			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "cop5556fa17/RuntimeFunctions", "polar_a", 
+					RuntimeFunctions.polar_aSig, false);
+			mv.visitVarInsn(ISTORE, 6);
 			
 			// Looping
 			mv.visitInsn(ICONST_0);
@@ -710,8 +728,6 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 			
 			mv.visitVarInsn(ILOAD, 2); //y
 			mv.visitVarInsn(ILOAD, 4); //Y
-//			mv.visitFieldInsn(GETSTATIC, className, statement_Assign.lhs.name, "Ljava/awt/image/BufferedImage;");
-//			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "cop5556fa17/ImageSupport", "getY", ImageSupport.getYSig, false);
 			mv.visitJumpInsn(IF_ICMPLT, l6);
 			
 			Label l8 = new Label();
@@ -722,8 +738,6 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 			
 			mv.visitVarInsn(ILOAD, 1); //x
 			mv.visitVarInsn(ILOAD, 3); //X
-//			mv.visitFieldInsn(GETSTATIC, className, statement_Assign.lhs.name, "Ljava/awt/image/BufferedImage;");
-//			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "cop5556fa17/ImageSupport", "getX", 	ImageSupport.getXSig, false);
 			mv.visitJumpInsn(IF_ICMPLT, l3);
 
 			return null;
