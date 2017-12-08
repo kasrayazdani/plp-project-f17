@@ -323,18 +323,17 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 	public Object visitIndex(Index index, Object arg) throws Exception {
 		// TODO HW6
 		if (!index.isCartesian()) {
+			//cart_x
 			index.e0.visit(this, arg);
 			index.e1.visit(this, arg);
-			//cart_x
 			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "cop5556fa17/RuntimeFunctions", "cart_x", 
 					RuntimeFunctions.cart_xSig, false);
+			
+			//cart_y
 			index.e0.visit(this, arg);
 			index.e1.visit(this, arg);
-			//cart_y
 			mv.visitMethodInsn(Opcodes.INVOKESTATIC, "cop5556fa17/RuntimeFunctions", "cart_y", 
 					RuntimeFunctions.cart_ySig, false);
-			//mv.visitVarInsn(ILOAD, 1);
-			//mv.visitVarInsn(ILOAD, 2);
 		}
 		else {
 			index.e0.visit(this, arg);
@@ -630,11 +629,11 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 			mv.visitMethodInsn(INVOKESTATIC, "cop5556fa17/ImageSupport", "readImage", 
 					ImageSupport.readImageSig, false);
 			if (((Declaration_Image)statement_In.getDec()).xSize!=null) {
-				mv.visitFieldInsn(GETSTATIC, className, statement_In.name, "Ljava/awt/image/BufferedImage;");
+				mv.visitFieldInsn(GETSTATIC, className, statement_In.name, ImageSupport.ImageDesc);
 				mv.visitMethodInsn(Opcodes.INVOKESTATIC, "cop5556fa17/ImageSupport", "getX", 
 						ImageSupport.getXSig, false);
 	
-				mv.visitFieldInsn(GETSTATIC, className, statement_In.name, "Ljava/awt/image/BufferedImage;");
+				mv.visitFieldInsn(GETSTATIC, className, statement_In.name, ImageSupport.ImageDesc);
 				mv.visitMethodInsn(Opcodes.INVOKESTATIC, "cop5556fa17/ImageSupport", "getY", 
 						ImageSupport.getYSig, false);
 				
@@ -719,6 +718,8 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 			// visit lhs
 			statement_Assign.e.visit(this, arg);
 			statement_Assign.lhs.visit(this, arg);
+			mv.visitMethodInsn(INVOKESTATIC, ImageSupport.className, "setPixel", 
+					ImageSupport.setPixelSig, false);
 			
 			Label l7 = new Label();
 			mv.visitLabel(l7);
@@ -762,9 +763,6 @@ public class CodeGenVisitor implements ASTVisitor, Opcodes {
 			mv.visitFieldInsn(GETSTATIC, className, lhs.name, ImageSupport.ImageDesc);
 			mv.visitVarInsn(ILOAD, 1);
 			mv.visitVarInsn(ILOAD, 2);
-			//lhs.index.visit(this, arg);
-			mv.visitMethodInsn(INVOKESTATIC, ImageSupport.className, "setPixel", 
-					ImageSupport.setPixelSig, false);
 			return null;
 		}
 		throw new UnsupportedOperationException();
